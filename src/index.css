@@ -12,7 +12,7 @@ html, body {
 
 body {
   color:#fff;
-  background:#14171F;
+  background:#100000;
 	margin: 0;
 	padding: 0;
   font-family: "Open Sans", sans-serif;
@@ -29,20 +29,20 @@ button { cursor: pointer; }
   font-family: 'Sirin Stencil', cursive;
 }
 
-.blue-glassmorphism {
-  background: rgb(39, 51, 89, 0.4);
-  border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  border: 1px solid rgba(0, 0, 0, 0.3);
-}
-
 .text-gradient {
   background-image: linear-gradient(to right, #780b11 0%, #E50914 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.red-glassmorphism {
+  background: rgba(21, 3, 4, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(0, 0, 0, 0.3);
 }
   
 @tailwind base;
