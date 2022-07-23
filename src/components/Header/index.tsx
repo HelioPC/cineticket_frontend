@@ -27,7 +27,7 @@ const Header = ({ classProp }: HeaderProps) => {
     const headerElements = ['Home', 'Filmes', 'About', 'Contact'];
 
     return (
-        <header className={`h-20 w-full flex items-center md:justify-start justify-between text-white py-4 sm:px-32 px-5 gap-x-5 fixed top-0 left-0 right-0 bg-[rgba(34,31,31,.7)] backdrop-blur-md shadow-md ${classProp}`}>
+        <header className={`h-20 w-full flex items-center md:justify-start justify-between text-white py-4 sm:px-32 px-5 gap-x-5 fixed top-0 left-0 right-0 z-10 bg-[rgba(34,31,31,.7)] backdrop-blur-md shadow-md ${classProp}`}>
             <div
                 className="p-3 bg-[#221F1F] rounded-full cursor-pointer sm:mx-10 mx-0"
             >

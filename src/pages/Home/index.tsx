@@ -1,7 +1,12 @@
 import Header from "../../components/Header";
 import { FaFacebookF, FaInstagram, FaTwitter, FaPhone } from "react-icons/fa";
+import {
+	Dimmer,
+	Loader,
+	Grid,
+	Message,
+} from 'semantic-ui-react';
 
-import { Logo, Logo2 } from "../../components/Logo";
 import { useEffect, useState } from "react";
 import api from "../../api";
 import { MyList } from "../../types";
@@ -50,14 +55,21 @@ const Home = () => {
             <Header />
             <SocialsList />
 
-            <main className="pt-20 w-screen h-screen flex flex-wrap gap-4">
-                {movies.length > 0 ?
-                    movies[0].items.results.map((item: any, index: number) => (
-                        <img src={`https://image.tmdb.org/t/p/w300${item.poster_path}`} alt="poster" key={index} />
-                    ))
-                    :
-                    <div>Error</div>
-                }
+            <main className="pt-20 px-16 w-screen h-screen flex">
+                <div className="flex flex-wrap gap-4 justify-center">
+                    {movies.length > 0 ?
+                        movies[0].items.results.map((item: any, index: number) => (
+                            <img
+                                src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
+                                className='w-56 hover:scale-105 duration-500 cursor-pointer'
+                                alt="poster"
+                                key={index}
+                            />
+                        ))
+                        :
+                        <div>Error</div>
+                    }
+                </div>
             </main>
         </div>
     );

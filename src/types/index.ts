@@ -7,3 +7,7 @@ export type MyList = {
     title: string;
     items: Item;
 }
+
+export type ErrorObj = {
+    message: string;
+}
