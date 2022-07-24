@@ -1,5 +1,17 @@
+type Movie = {
+    id: number;
+    title: string;
+    release_date: string;
+    overview: string;
+    poster_path: string;
+    original_title: string;
+    adult: boolean;
+    first_air_date: string;
+}
+
+
 type Item = {
-    results: [];
+    results: Movie[];
 }
 
 export type MyList = {

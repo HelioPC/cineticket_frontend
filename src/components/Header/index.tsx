@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
-import { BsTwitter, BsGithub, BsFacebook, BsWhatsapp, BsLinkedin, BsInstagram, BsMessenger, BsDiscord, BsTelegram } from 'react-icons/bs';
 import { FiMenu } from 'react-icons/fi';
+import { NavLink } from 'react-router-dom';
 import { Logo2 } from '../Logo';
 
 type ItemProps = {
     title: string | any;
+    url: string;
     classProp?: string;
 }
 
@@ -14,22 +15,37 @@ type HeaderProps = {
     showButton?: boolean;
 }
 
-const NavbarItem = ({ title, classProp }: ItemProps) => {
+const NavbarItem = ({ title, url, classProp }: ItemProps) => {
     return (
-        <li className={`mx-4 cursor-pointer hover:text-[#E50914] duration-500 font-bold ${classProp}`}>
-            <a href="/">{title}</a>
+        <li className={`mx-4 ${classProp}`}>
+            <NavLink
+                to={url}
+                className={
+                    ({ isActive }) => (
+                        `
+                        cursor-pointer hover:text-[#B81D24] duration-500 font-bold
+                        ` + (isActive ? 'text-[#E50914]' : '')
+                    )
+                }
+            >
+                {title}
+            </NavLink>
         </li>
     )
 }
 
 const Header = ({ classProp }: HeaderProps) => {
     const [toggleMenu, setToggleMenu] = useState(false);
-    const headerElements = ['Home', 'Filmes', 'About', 'Contact'];
+    const headerElements = [
+        { title: 'Home', url: '/' },
+        { title: 'Filmes', url: '/sessions' },
+        { title: 'About', url: '/about' }
+    ];
 
     return (
-        <header className={`h-20 w-full flex items-center md:justify-start justify-between text-white py-4 sm:px-32 px-5 gap-x-5 fixed top-0 left-0 right-0 z-10 bg-[rgba(34,31,31,.7)] backdrop-blur-md shadow-md ${classProp}`}>
+        <header className={`h-20 w-full flex items-center md:justify-start justify-between text-white py-4 sm:px-32 px-5 gap-x-5 fixed top-0 left-0 right-0 z-10 bg-[rgba(34,31,31,.7)] backdrop-blur-md ${classProp}`}>
             <div
-                className="p-3 bg-[#221F1F] rounded-full cursor-pointer sm:mx-10 mx-0"
+                className="p-3 bg-[#DDD] rounded-full cursor-pointer sm:mx-10 mx-0"
             >
                 <Logo2 />
             </div>
@@ -42,7 +58,7 @@ const Header = ({ classProp }: HeaderProps) => {
             >
                 {
                     headerElements.map((item, index) => (
-                        <NavbarItem title={item} key={index} />
+                        <NavbarItem title={item.title} url={item.url} key={index} />
                     ))
                 }
             </ul>
@@ -80,7 +96,8 @@ const Header = ({ classProp }: HeaderProps) => {
                         {
                             headerElements.map((item, index) => (
                                 <NavbarItem
-                                    title={item}
+                                    title={item.title}
+                                    url={item.url}
                                     key={index}
                                     classProp="my-2 text-lg"
                                 />
