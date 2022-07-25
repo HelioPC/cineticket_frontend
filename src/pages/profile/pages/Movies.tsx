@@ -21,6 +21,14 @@ const Movies = () => {
     const closeModal = () => {
         setModalOpen(false);
     }
+    
+    const getMovies = async () => {
+        const req = await fetch('http://192.168.43.35/cineticket/filmes');
+        const json = await req.json();
+
+        console.log(json);
+    }
+
     return (
         <div className='text-black'>
             <FloatingActionButton
@@ -28,6 +36,13 @@ const Movies = () => {
             />
             
             <h1>Movies</h1>
+
+            <button
+                className='bg-red-800'
+                onClick={getMovies}
+            >
+                Get movies
+            </button>
 
             <Submit
                 closeModal={closeModal}
