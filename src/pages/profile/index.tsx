@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Outlet, Route, Routes } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import Cinema from "./pages/Cinema";
 import Movies from "./pages/Movies";
@@ -9,10 +9,7 @@ const Profile = () => {
             <Sidebar />
             
             <div className='p-7 flex-1 sm:h-screen h-[90vh] overflow-y-scroll'>
-                <Routes>
-                    <Route path="/movies" element={<Movies />} />
-                    <Route path="/cinema" element={<Cinema />} />
-                </Routes>
+                <Outlet />
             </div>
         </div>
     );

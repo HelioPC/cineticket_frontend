@@ -13,13 +13,15 @@ import { useWindowDimensions } from '../../helpers/dimensions';
 import { Logo2 } from '../Logo';
 // Custom alerts
 import { AlertError, AlertSuccess } from '../Alerts';
+import { useUser } from '../../contexts/UserContext';
 
 type HeaderProps = {
     classProp?: string;
     open: boolean;
+    name: string;
 }
 
-const SidebarHeader = ({ open }: HeaderProps) => {
+const SidebarHeader = ({ open, name }: HeaderProps) => {
     const iconSize = 20;
     const [account, setAccount] = useState(null);
 
@@ -39,7 +41,7 @@ const SidebarHeader = ({ open }: HeaderProps) => {
                             duration-300 ${!open && "scale-0"}
                         `}
                     >
-                        Eliude
+                        {name}
                     </h1>
                     <p className={`text-[#AAA] text-[12px] duration-300 ${!open && "scale-0"}`}>
                         admin
@@ -52,12 +54,13 @@ const SidebarHeader = ({ open }: HeaderProps) => {
 
 const Sidebar = () => {
     const iconSize = 20;
+    const { user } = useUser();
     const [open, setOpen] = useState(true);
     const [toggleMenu, setToggleMenu] = useState(false);
     const { width } = useWindowDimensions();
     const menu = [
-        {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: '/profile/cinema'},
-        {title: 'Filmes', icon: <MdLocalMovies size={iconSize} />, link: '/profile/movies'},
+        {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: `/profile/${user.name.replaceAll(' ', '')}/movies`},
+        {title: 'Filmes', icon: <MdLocalMovies size={iconSize} />, link: `/profile/${user.name.replaceAll(' ', '')}/cinema`},
     ];
 
     useEffect(() => {
@@ -86,7 +89,7 @@ const Sidebar = () => {
                     onClick={() => setOpen(!open)}
                 />
 
-                <SidebarHeader open={open} />
+                <SidebarHeader open={open} name={user.name} />
 
                 <ul className='pt-6'>
                     {menu.map((item, index) => (
@@ -157,7 +160,7 @@ const Sidebar = () => {
                         </li>
 
                         <li className='my-5'>
-                            <SidebarHeader open={true} />
+                            <SidebarHeader open={true} name={user.name} />
                         </li>
                         
                         {menu.map((item, index) => (

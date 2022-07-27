@@ -1,5 +1,7 @@
 // React imports
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { useUser } from "./contexts/UserContext";
 import About from "./pages/About";
 
 // Pages
@@ -7,9 +9,13 @@ import Home from './pages/Home'
 import Login from "./pages/Login";
 import Page404 from "./pages/Page404";
 import Profile from "./pages/profile";
+import Cinema from "./pages/profile/pages/Cinema";
+import Movies from "./pages/profile/pages/Movies";
 import Sessions from "./pages/Sessions";
 
 const App = () => {
+    const { user } = useUser();
+
 	return (
 		<BrowserRouter>
             <Routes>
@@ -17,7 +23,14 @@ const App = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="sessions" element={<Sessions />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/profile/*" element={<Profile />} />
+                
+                <Route path="/profile/:id/" element={<ProtectedRoute />}>
+                    <Route path="/profile/:id/" element={<Profile />}>
+                        <Route path="/profile/:id/movies" element={<Movies />} />
+                        <Route path="/profile/:id/cinema" element={<Cinema />} />
+                    </Route>
+                </Route>
+
                 <Route path='*' element={<Page404 />} />
             </Routes>
         </BrowserRouter>
