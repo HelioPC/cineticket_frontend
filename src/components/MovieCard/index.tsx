@@ -29,7 +29,7 @@ const MovieType: any = {
 
 const MovieCard = ({ imageUrl, title, type, url }: Props) => {
     return (
-        <div className='flex flex-col md:flex-[20%] md:max-w-[20%] flex-[40%] max-w-[40%] gap-y-5'>
+        <div className='flex flex-col md:flex-[20%] md:max-w-[16%] flex-[40%] max-w-[40%] gap-y-5'>
             <img
                 src={imageUrl}
                 className='hover:scale-105 duration-500 cursor-pointer h-[252px] w-full rounded-md shadow-black shadow-2xl align-middle'

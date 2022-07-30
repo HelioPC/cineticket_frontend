@@ -1,11 +1,11 @@
 // React hooks
 import { useEffect, useState } from 'react';
 // React router dom
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 // React Icons
 import { AiOutlineClose } from 'react-icons/ai';
 import { FaTheaterMasks } from 'react-icons/fa';
-import { FiMenu } from 'react-icons/fi';
+import { FiMenu, FiUsers } from 'react-icons/fi';
 import { MdKeyboardArrowLeft, MdLocalMovies, MdLogout } from 'react-icons/md';
 // Auxiliary functions
 import { useWindowDimensions } from '../../helpers/dimensions';
@@ -13,15 +13,16 @@ import { useWindowDimensions } from '../../helpers/dimensions';
 import { Logo2 } from '../Logo';
 // Custom alerts
 import { AlertError, AlertSuccess } from '../Alerts';
-import { useUser } from '../../contexts/UserContext';
+import { UserActions, useUser } from '../../contexts/UserContext';
 
 type HeaderProps = {
     classProp?: string;
     open: boolean;
     name: string;
+    onClick: () => void;
 }
 
-const SidebarHeader = ({ open, name }: HeaderProps) => {
+const SidebarHeader = ({ open, name, onClick }: HeaderProps) => {
     const iconSize = 20;
     const [account, setAccount] = useState(null);
 
@@ -30,6 +31,7 @@ const SidebarHeader = ({ open, name }: HeaderProps) => {
             <>
                 <div
                     className={`cursor-pointer duration-500 w-10 rounded-lg hover:rotate-[360deg]`}
+                    onClick={onClick}
                 >
                     <Logo2 />
                 </div>
@@ -54,13 +56,15 @@ const SidebarHeader = ({ open, name }: HeaderProps) => {
 
 const Sidebar = () => {
     const iconSize = 20;
-    const { user } = useUser();
+    const { user, dispatch } = useUser();
     const [open, setOpen] = useState(true);
     const [toggleMenu, setToggleMenu] = useState(false);
     const { width } = useWindowDimensions();
+    const navigate = useNavigate();
     const menu = [
-        {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: `/profile/${user.name.replaceAll(' ', '')}/movies`},
-        {title: 'Filmes', icon: <MdLocalMovies size={iconSize} />, link: `/profile/${user.name.replaceAll(' ', '')}/cinema`},
+        {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: `/profile/${user.name.replaceAll(' ', '')}/cinema`},
+        {title: 'Filmes', icon: <MdLocalMovies size={iconSize} />, link: `/profile/${user.name.replaceAll(' ', '')}/movies`},
+        {title: 'Funcionários', icon: <FiUsers size={iconSize} />, link: `/profile/${user.name.replaceAll(' ', '')}/users`},
     ];
 
     useEffect(() => {
@@ -68,6 +72,15 @@ const Sidebar = () => {
             setOpen(false);
         }
     }, [width]);
+
+    const handleLogout = () => {
+        localStorage.removeItem('userCineticketUAN2022');
+        dispatch({
+            type: UserActions.clearUser,
+            payload: null
+        });
+        window.location.reload();
+    }
 
     return (
         <>
@@ -89,7 +102,7 @@ const Sidebar = () => {
                     onClick={() => setOpen(!open)}
                 />
 
-                <SidebarHeader open={open} name={user.name} />
+                <SidebarHeader open={open} name={user.name} onClick={() => navigate(`/profile/${user.name.replaceAll(' ', '')}`)} />
 
                 <ul className='pt-6'>
                     {menu.map((item, index) => (
@@ -116,6 +129,7 @@ const Sidebar = () => {
                         rounded-md text-gray-300 hover:bg-[#FF0000] mt-2
                         hover:scale-105
                         '
+                        onClick={handleLogout}
                     >
                         <MdLogout size={iconSize} />
                         <span className={`${!open && 'hidden'} origin-left duration-200`}>Logout</span>
@@ -160,7 +174,7 @@ const Sidebar = () => {
                         </li>
 
                         <li className='my-5'>
-                            <SidebarHeader open={true} name={user.name} />
+                            <SidebarHeader open={true} name={user.name} onClick={() => navigate(`/profile/${user.name.replaceAll(' ', '')}`)} />
                         </li>
                         
                         {menu.map((item, index) => (
@@ -187,6 +201,7 @@ const Sidebar = () => {
                                 rounded-md text-gray-300 hover:bg-[#FF0000] mt-2
                                 hover:scale-105
                             '
+                            onClick={handleLogout}
                         >
                             <MdLogout size={iconSize} />
                             <span className={`origin-left duration-200`}>Logout</span>

@@ -3,8 +3,7 @@ import Header from "../../components/Header";
 
 const Page404 = () => {
     return (
-        <div className="w-screen h-screen flex flex-col justify-center items-center text-white">
-            <Header />
+        <div className="w-screen h-screen flex flex-col justify-center items-center text-white bg-black">
             <h1 className="sm:text-5xl text-5xl font-bold">404</h1>
             <p>Page not found</p>
 

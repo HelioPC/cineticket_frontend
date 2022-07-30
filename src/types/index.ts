@@ -9,7 +9,6 @@ type Movie = {
     first_air_date: string;
 }
 
-
 type Item = {
     results: Movie[];
 }
@@ -22,4 +21,19 @@ export type MyList = {
 
 export type ErrorObj = {
     message: string;
+}
+
+export type CardType = {
+    title: string;
+    icon: any;
+    color: {
+      background: string;
+      boxShadow: string;  
+    };
+    value: string;
+    barValue: number;
+    series: {
+        name: string;
+        data: number[];
+    }[];
 }

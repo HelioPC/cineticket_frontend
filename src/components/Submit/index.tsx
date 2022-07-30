@@ -1,3 +1,4 @@
+import { TextField } from "@mui/material";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { AlertSuccess } from "../Alerts";
@@ -70,7 +71,7 @@ const Submit = ({ closeModal, classProp }: ModalProps) => {
             onClick={() => closeSubmit()}
         >
             <div
-                className='sm:w-96 w-72 min-h-80 h-auto bg-[#222] text-black p-4 rounded-lg'
+                className='sm:w-96 w-72 min-h-80 h-auto bg-[#222] p-4 rounded-lg'
                 onClick={e => {
                     e.stopPropagation();
                 }}
@@ -96,6 +97,8 @@ const Submit = ({ closeModal, classProp }: ModalProps) => {
                         <option value="Terror">Terror</option>
                         <option value="Documentário">Documentário</option>
                     </select>
+
+                    <TextField id="outlined-basic" label="Outlined" variant="outlined" />
 
                     <input type="text" value={classification} onChange={(e) => setClassification(e.target.value)} placeholder='Qual a classificação do filme' className="placeholder:text-[#CCC] bg-transparent border-[#AAA] rounded-md my-2" />
 

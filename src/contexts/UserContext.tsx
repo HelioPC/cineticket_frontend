@@ -47,7 +47,11 @@ const userReducer = (user: User, action: Action) => {
 }
 
 export const UserProvider = ({ children }: ProviderProps) => {
-    const [user, dispatch] = useReducer(userReducer, initialUser);
+    // if localStorage has user, get it
+    const localUser = localStorage.getItem('userCineticketUAN2022');
+
+    const [user, dispatch] = useReducer(userReducer, localUser ? JSON.parse(localUser) : initialUser);
+
     const value = { user, dispatch };
 
     return (

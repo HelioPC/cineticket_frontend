@@ -37,6 +37,9 @@ const Login = () => {
             type: UserActions.setUser,
             payload: userAuth
         });
+
+        // Store user in local storage
+        localStorage.setItem('userCineticketUAN2022', JSON.stringify(userAuth));
     }
 
     useEffect(() => {

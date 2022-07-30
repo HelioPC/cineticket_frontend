@@ -2,21 +2,13 @@ import { useState } from 'react';
 import axios from "axios";
 import { BsPlusCircleFill } from 'react-icons/bs';
 import { AlertSuccess } from '../../../components/Alerts';
-
-type ButtonProps = {
-    onClick: () => void;
-    className?: string;
-}
-
-const FloatingActionButton = ({ onClick }: ButtonProps) => {
-    return (
-        <button className='fixed bottom-20 right-20 sm:flex hidden hover:-translate-y-4 duration-500' onClick={onClick}>
-            <BsPlusCircleFill size={45} />
-        </button>
-    );
-}
+import Modal from '../../../components/Modal';
+import NewCinema from '../../../components/NewCinema';
+import FloatingAddButton from '../../../components/FloatingAddButton';
 
 const Cinema = () => {
+    const [open, setOpen] = useState(false);
+    
     const getCinemas = async () => {
         const req = await fetch('http://192.168.43.35/cineticket/cinemas');
         const json = await req.json();
@@ -53,7 +45,8 @@ const Cinema = () => {
     
     return (
         <div className='text-black'>
-            <FloatingActionButton onClick={getCinemas} />
+            <FloatingAddButton onClick={() => setOpen(true)} title='Adicionar cinema' />
+
             <h1>Cinema</h1>
 
             <button
@@ -62,6 +55,14 @@ const Cinema = () => {
             >
                 Get Cinema's info
             </button>
+
+            <Modal
+                open={open}
+                setOpen={setOpen}
+                title='Formulário Cinema'
+            >
+                <NewCinema />
+            </Modal>
         </div>
     )
 }
