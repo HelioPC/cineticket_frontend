@@ -7,14 +7,15 @@ type ModalProps = {
     setOpen: (e: boolean) => void;
     title: string;
     children: React.ReactNode;
+    maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
 const Modal = (props: ModalProps) => {
 
-    const { title, children, open, setOpen } = props;
+    const { title, children, maxWidth, open, setOpen } = props;
 
     return (
-        <Dialog open={open} fullWidth>
+        <Dialog open={open} fullWidth maxWidth={maxWidth === undefined ? 'sm' : maxWidth}>
             <DialogTitle>
                 <div className='flex justify-between items-center'>
                     <Typography variant="h6" component="div">

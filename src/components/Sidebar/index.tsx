@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 // React Icons
 import { AiOutlineClose } from 'react-icons/ai';
+import { BsReverseLayoutTextSidebarReverse } from 'react-icons/bs';
 import { FaTheaterMasks } from 'react-icons/fa';
 import { FiMenu, FiUsers } from 'react-icons/fi';
 import { MdKeyboardArrowLeft, MdLocalMovies, MdLogout } from 'react-icons/md';
@@ -11,8 +12,6 @@ import { MdKeyboardArrowLeft, MdLocalMovies, MdLogout } from 'react-icons/md';
 import { useWindowDimensions } from '../../helpers/dimensions';
 // Assets
 import { Logo2 } from '../Logo';
-// Custom alerts
-import { AlertError, AlertSuccess } from '../Alerts';
 import { UserActions, useUser } from '../../contexts/UserContext';
 
 type HeaderProps = {
@@ -62,9 +61,10 @@ const Sidebar = () => {
     const { width } = useWindowDimensions();
     const navigate = useNavigate();
     const menu = [
-        {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: `/profile/${user.name.replaceAll(' ', '')}/cinema`},
-        {title: 'Filmes', icon: <MdLocalMovies size={iconSize} />, link: `/profile/${user.name.replaceAll(' ', '')}/movies`},
-        {title: 'Funcionários', icon: <FiUsers size={iconSize} />, link: `/profile/${user.name.replaceAll(' ', '')}/users`},
+        {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: `/profile/${user.email.replaceAll(' ', '')}/cinema`},
+        {title: 'Filmes', icon: <MdLocalMovies size={iconSize} />, link: `/profile/${user.email.replaceAll(' ', '')}/movies`},
+        {title: 'Funcionários', icon: <FiUsers size={iconSize - 3} />, link: `/profile/${user.email.replaceAll(' ', '')}/users`},
+        {title: 'Reservas', icon: <BsReverseLayoutTextSidebarReverse size={iconSize - 3} />, link: `/profile/${user.email.replaceAll(' ', '')}/reservations`},
     ];
 
     useEffect(() => {
@@ -102,7 +102,7 @@ const Sidebar = () => {
                     onClick={() => setOpen(!open)}
                 />
 
-                <SidebarHeader open={open} name={user.name} onClick={() => navigate(`/profile/${user.name.replaceAll(' ', '')}`)} />
+                <SidebarHeader open={open} name={user.email} onClick={() => navigate(`/profile/${user.email.replaceAll(' ', '')}`)} />
 
                 <ul className='pt-6'>
                     {menu.map((item, index) => (
@@ -174,7 +174,7 @@ const Sidebar = () => {
                         </li>
 
                         <li className='my-5'>
-                            <SidebarHeader open={true} name={user.name} onClick={() => navigate(`/profile/${user.name.replaceAll(' ', '')}`)} />
+                            <SidebarHeader open={true} name={user.email} onClick={() => navigate(`/profile/${user.email.replaceAll(' ', '')}`)} />
                         </li>
                         
                         {menu.map((item, index) => (

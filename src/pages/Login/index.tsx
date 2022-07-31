@@ -46,7 +46,7 @@ const Login = () => {
         console.log(user);
 
         if(user.id) {
-            navigate(`/profile/${user.name.replaceAll(' ', '')}/`);
+            navigate(`/profile/${user.email.replaceAll(' ', '')}/`);
         }
     }, [user]);
 

@@ -52,7 +52,7 @@ const Home = () => {
             );
 
             setMovies(list);
-            console.log(list);
+            console.log(movies);
         }
         loadMovies();
     } , []);

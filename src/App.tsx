@@ -12,6 +12,7 @@ import Profile from "./pages/profile";
 import Cinema from "./pages/profile/pages/Cinema";
 import Movies from "./pages/profile/pages/Movies";
 import UsersPage from "./pages/profile/pages/UsersPage";
+import Reservas from "./pages/Reservas";
 import Sessions from "./pages/Sessions";
 
 const App = () => {
@@ -30,6 +31,8 @@ const App = () => {
                     <Route path="/profile/:id/movies" element={<Movies />} />
                     <Route path="/profile/:id/cinema" element={<Cinema />} />
                     <Route path="/profile/:id/users" element={<UsersPage />} />
+                    <Route path='/profile/:id/reservations' element={<Reservas />} />
+                    <Route path=":id/*" element={<Page404 />} />
                 </Route>
 
                 <Route path='*' element={<Page404 />} />

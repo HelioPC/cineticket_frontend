@@ -1,4 +1,6 @@
 import Card from "../../components/Card";
+import FilmesMaisAssistidos from "../../components/Charts/Filmes";
+import ReservasChart from "../../components/Charts/Reservas";
 import List from "../../components/List";
 import { cardsData } from '../../data/data';
 
@@ -17,6 +19,10 @@ const Profile = () => {
                     })
                 }
             </div>
+            
+            <ReservasChart />
+
+            <FilmesMaisAssistidos />
 
             <div className='shadow-[2px_4px_10px_1px_rgba(0,0,0,.5)] my-20'>
                 <List />

@@ -1,12 +1,13 @@
 import React from "react";
-import { Outlet, Route, Navigate } from "react-router-dom";
+import { Outlet, Route, Navigate, useParams } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import Sidebar from "../Sidebar";
 
 const ProtectedRoute = () => {
     const { user } = useUser();
+    const { id } = useParams();
 
-    return user.id ? (
+    return (user.id && id === user.email) ? (
         <div className='flex sm:flex-row flex-col w-full h-screen bg-white'>
             <Sidebar />
             
