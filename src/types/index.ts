@@ -7,6 +7,7 @@ type Movie = {
     original_title: string;
     adult: boolean;
     first_air_date: string;
+    genre_ids: number[];
 }
 
 type Item = {

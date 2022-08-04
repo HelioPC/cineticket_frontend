@@ -49,13 +49,6 @@ const Cinema = () => {
 
             <h1>Cinema</h1>
 
-            <button
-                className='bg-red-800 px-2 py-1 rounded text-white'
-                onClick={handleSubmit}
-            >
-                Get Cinema's info
-            </button>
-
             <Modal
                 open={open}
                 setOpen={setOpen}
