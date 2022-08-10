@@ -1,0 +1,11 @@
+<FloatingAddButton onClick={() => setOpen(true)} title='Adicionar cinema' />
+
+            <CinemaList />
+
+            <Modal
+                open={open}
+                setOpen={setOpen}
+                title='Formulário Cinemas'
+            >
+                <NewCinema cidades={cidades} ruas={ruas} setOpen={setOpen} setCidade={setCidade} />
+            </Modal>

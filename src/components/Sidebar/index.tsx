@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 // React Icons
 import { AiOutlineClose } from 'react-icons/ai';
-import { BsReverseLayoutTextSidebarReverse } from 'react-icons/bs';
+import { BsReverseLayoutTextSidebarReverse, BsClockFill } from 'react-icons/bs';
 import { FaTheaterMasks } from 'react-icons/fa';
 import { FiMenu, FiUsers } from 'react-icons/fi';
 import { MdKeyboardArrowLeft, MdLocalMovies, MdLogout } from 'react-icons/md';
@@ -61,10 +61,11 @@ const Sidebar = () => {
     const { width } = useWindowDimensions();
     const navigate = useNavigate();
     const menu = [
-        {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: `/profile/${user.email.replaceAll(' ', '')}/cinema`},
+        {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: `/profile/${user.email.replaceAll(' ', '')}/cinemas`},
         {title: 'Filmes', icon: <MdLocalMovies size={iconSize} />, link: `/profile/${user.email.replaceAll(' ', '')}/movies`},
         {title: 'Funcionários', icon: <FiUsers size={iconSize - 3} />, link: `/profile/${user.email.replaceAll(' ', '')}/users`},
         {title: 'Reservas', icon: <BsReverseLayoutTextSidebarReverse size={iconSize - 3} />, link: `/profile/${user.email.replaceAll(' ', '')}/reservations`},
+        {title: 'Sessões', icon: <BsClockFill size={iconSize - 3} />, link: `/profile/${user.email.replaceAll(' ', '')}/session`}
     ];
 
     useEffect(() => {

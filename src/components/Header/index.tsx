@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
 import { FiMenu } from 'react-icons/fi';
 import { NavLink } from 'react-router-dom';
@@ -36,14 +36,27 @@ const NavbarItem = ({ title, url, classProp }: ItemProps) => {
 
 const Header = ({ classProp }: HeaderProps) => {
     const [toggleMenu, setToggleMenu] = useState(false);
+    const [color, setColor] = useState(true);
     const headerElements = [
         { title: 'Home', url: '/' },
         { title: 'Filmes', url: '/sessions' },
         { title: 'About', url: '/about' }
     ];
 
+    useEffect(() => {
+        const scrollListener = () => {
+            setColor(window.scrollY < 165);
+        }
+
+        window.addEventListener('scroll', scrollListener);
+
+        return () => {
+            window.removeEventListener('scroll', scrollListener)
+        }
+    }, []);
+
     return (
-        <header className={`h-20 w-full flex items-center md:justify-start justify-between text-white py-4 sm:px-32 px-5 gap-x-5 fixed top-0 left-0 right-0 z-10 bg-[rgba(0,0,0,.7)] backdrop-blur-md ${classProp}`}>
+        <header className={`h-20 w-full flex items-center md:justify-start justify-between text-white py-4 sm:px-32 px-5 gap-x-5 fixed top-0 left-0 right-0 z-10 duration-500 ${color ? 'bg-transparent' : 'bg-[rgba(0,0,0,.7)] backdrop-blur-md'} ${classProp}`}>
             <div
                 className="p-3 rounded-full cursor-pointer sm:mx-10 mx-0"
             >

@@ -33,7 +33,7 @@ const Movies = () => {
                 setOpen={setOpen}
                 title='Formulário de Filme'
             >
-                <NewMovie />
+                <NewMovie setOpen={setOpen} />
             </Modal>
         </div>
     );

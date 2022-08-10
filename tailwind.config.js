@@ -25,6 +25,10 @@ module.exports = {
       animation: {
         "slide-in": "slide-in 0.5s ease-out",
       },
+      gridTemplateColumns: {
+        // Simple 16 column grid
+        'fill': 'repeat(auto-fill, minmax(140px, 1fr))',
+      }
     },
   },
   variants: {

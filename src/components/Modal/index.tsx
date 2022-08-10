@@ -19,7 +19,7 @@ const Modal = (props: ModalProps) => {
             <DialogTitle>
                 <div className='flex justify-between items-center'>
                     <Typography variant="h6" component="div">
-                        <h1 className='font-bold'>{title}</h1>
+                        <h1 className='font-bold text-black'>{title}</h1>
                     </Typography>
                     
                     <MuiButton

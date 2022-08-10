@@ -1,0 +1,13 @@
+
+
+ * {
+    margin: 0;
+    padding: 0;
+  }
+
+  
+  select:focus {
+    border: 2px solid #FFF !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
