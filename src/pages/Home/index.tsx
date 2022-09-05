@@ -2,10 +2,14 @@ import Header from "../../components/Header";
 import { FaFacebookF, FaInstagram, FaTwitter, FaPhone } from "react-icons/fa";
 
 import { useEffect, useState } from "react";
-import api from "../../api";
-import { MyList } from "../../types";
+import { Movie, MovieProps, MyList } from "../../types";
 import { Loading } from "../../components/Utils";
 import MovieCard from "../../components/MovieCard";
+import '../../assets/styles/main.css';
+import '../../assets/styles/media.css';
+import MainMovie from "../../components/MainMovie";
+import { BACKENDADDRESS, GENRES } from "../../data/data";
+
 
 const SocialsList = () => {
     return (
@@ -35,46 +39,141 @@ const SocialsList = () => {
 }
 
 const Home = () => {
-    const [movies, setMovies] = useState<MyList[]>([]);
+    const [filteredMovies, setFilteredMovies] = useState<MovieProps[]>([]);
+    const [selectedGenre, setSelectedGenre] = useState<string>("");
+    const [selectedYear, setSelectedYear] = useState<string>("");
+    const [backendMovies, setBackendMovies] = useState<MovieProps[]>([]);
 
     useEffect(() => {
-        const loadMovies = async () => {
-            let list: MyList[] = await api.getHomeList();
+        const getMovies = async () => {
 
-            // Remove results whose results doen't have a first_air_date
-            list = list.filter(item => item.items.results.filter(result => result.first_air_date === undefined).length > 0);
+			if(backendMovies.length !== 0) return;
 
-            // Pop elements with first_air_date
-            list = list.map(item => {
-                item.items.results = item.items.results.filter(result => result.first_air_date === undefined);
-                return item;
-            }
-            );
+			const req = await fetch(`${BACKENDADDRESS}cineticket/filmes/exibicao`);
+			const json = await req.json();
 
-            setMovies(list);
-            console.log(list);
-        }
-        loadMovies();
+			json.map((item: MovieProps) => {
+                backendMovies.push(
+                    {
+                        ID_FILME: item.ID_FILME,
+                        ANO: item.ANO,
+                        TITULO: item.TITULO,
+                        DESCRICAO: item.DESCRICAO,
+                        GENERO: item.GENERO,
+                        CLASSIFICACAO: item.CLASSIFICACAO,
+                        CAPA_URL: item.CAPA_URL
+                    }
+                )
+			});
+            setFilteredMovies(backendMovies);
+		}
+
+		getMovies();
     } , []);
+    
+    // Filter movies by genre
+    useEffect(() => {
+        const filterMoviesByGenre = () => {
+            // Check if is already filtered by genre
+            if(selectedGenre !== "") {
+                setFilteredMovies(backendMovies.filter(movie => movie.GENERO === selectedGenre));
+            } else {
+                setFilteredMovies(backendMovies);
+            }
+        }
+        filterMoviesByGenre();
+    } , [selectedGenre]);
 
-    if(movies.length === 0) return <Loading text="Connecting to CineTicket API..." />;
+    // Filter movies by year
+    useEffect(() => {
+        const filterMoviesByYear = () => {
+            // Check if is already filtered by year
+            if(selectedYear !== "") {
+                const filtered = filteredMovies.filter(movie => movie.ANO === selectedYear);
+                if(filtered.length > 0) {
+                    setFilteredMovies(filtered);
+                }
+            } else {
+                setFilteredMovies(filteredMovies);
+            }
+        }
+        filterMoviesByYear();
+    } , [selectedYear]);
+
+    if(filteredMovies.length === 0) return <Loading text="Connecting to CineTicket API..." />;
+    console.log(backendMovies);
 
     return (
-        <div className="w-screen bg-[#2D2D2D]">
+        <div className="w-screen bg-[#111] sm:pt-0 pt-40 scroll">
             <Header />
             <SocialsList />
 
-            <main className="pt-20 sm:px-16 px-0 w-screen min-h-screen flex">
-                <div className="flex flex-wrap w-full gap-4 justify-center">
-                    {movies.length > 0 ?
-                        movies[0].items.results
-                        .map((item: any, index: number) => (
+            <MainMovie
+                image={`${backendMovies[0].CAPA_URL}`}
+                title={backendMovies[0].TITULO}
+                releaseDate={backendMovies[0].DESCRICAO}
+            />
+
+            <div className="sm:px-16 px-10">
+                <div className="filter-bar">
+
+                    <div className="filter-dropdowns">
+
+                        <select
+                            name="genre"
+                            className="bg-transparent border-none rounded-lg"
+                            onChange={(e) => setSelectedGenre(e.target.value)}
+                        >
+                            <option value="">All Genres</option>
+                            {
+                                Object.keys(GENRES).map((key, index) => (
+                                    <option key={index} value={key}>{GENRES[key]}</option>
+                                ))
+                            }
+                        </select>
+
+                        <select
+                            name="year"
+                            className="bg-transparent border-none rounded-lg"
+                            onChange={(e) => setSelectedYear(e.target.value)}
+                        >
+                            <option value="">All the years</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                        </select>
+
+                    </div>
+
+                    <div className="filter-radios bg-[rgba(70,0,0,.5)]">
+
+                        <input type="radio" name="grade" id="featured" defaultChecked/>
+                        <label htmlFor="featured">Featured</label>
+
+                        <input type="radio" name="grade" id="popular"/>
+                        <label htmlFor="popular">Popular</label>
+
+                        <input type="radio" name="grade" id="newest"/>
+                        <label htmlFor="newest">Newest</label>
+
+                        <div className="checked-radio-bg"></div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <main className="py-24 movies sm:px-16 px-10">
+                <div className="movies-grid">
+                    {filteredMovies.length > 0 ?
+                        filteredMovies.map((item: MovieProps, index: number) => (
                             <MovieCard
                                 key={index}
-                                imageUrl={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
-                                title={item.title}
-                                type={item.genre_ids}
+                                imageUrl={item.CAPA_URL}
+                                title={item.TITULO}
+                                type={[28]}
                                 url='/'
+                                releaseDate={item.ANO}
+                                category={[28]}
                             />
                         ))
                         :

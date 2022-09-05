@@ -1,38 +1,40 @@
+import { Tooltip } from '@mui/material';
 import { useState } from 'react';
 import { BsPlusCircleFill } from 'react-icons/bs';
+import FloatingAddButton from '../../../components/FloatingAddButton';
+import { MoviesList } from '../../../components/List/MoviesList';
+import Modal from '../../../components/Modal';
+import NewMovie from '../../../components/NewMovie';
 import Submit from '../../../components/Submit';
 
-type ButtonProps = {
-    onClick: () => void;
-    className?: string;
-}
-
-const FloatingActionButton = ({ onClick }: ButtonProps) => {
-    return (
-        <button className='fixed bottom-20 right-20 sm:flex hidden hover:-translate-y-4 duration-500' onClick={onClick}>
-            <BsPlusCircleFill size={45} />
-        </button>
-    );
-}
-
 const Movies = () => {
-    const [modalOpen, setModalOpen] = useState(false);
+    const [open, setOpen] = useState(false);
+    const img = 'https://upload.wikimedia.org/wikipedia/commons/7/7e/User-_Sharky2803.jpg?20170705160600';
 
     const closeModal = () => {
-        setModalOpen(false);
+        setOpen(false);
     }
-    return (
-        <div className='text-black'>
-            <FloatingActionButton
-                onClick={() => setModalOpen(true)}
-            />
-            
-            <h1>Movies</h1>
+    
+    const getMovies = async () => {
+        const req = await fetch('http://192.168.43.35/cineticket/filmes');
+        const json = await req.json();
 
-            <Submit
-                closeModal={closeModal}
-                classProp={modalOpen ? 'flex' : 'hidden'}
-            />
+        console.log(json);
+    }
+
+    return (
+        <div className='text-black w-full h-full overflow-visible py-10'>
+            <FloatingAddButton onClick={() => setOpen(true)} title='Adicionar filme' />
+
+            <MoviesList />
+
+            <Modal
+                open={open}
+                setOpen={setOpen}
+                title='Formulário de Filme'
+            >
+                <NewMovie setOpen={setOpen} />
+            </Modal>
         </div>
     );
 }

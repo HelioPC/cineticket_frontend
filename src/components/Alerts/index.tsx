@@ -9,7 +9,7 @@ export const AlertError = ({ title, description }: AlertProps) => {
     Swal.fire({
         title: title,
         icon: "error",
-        text: description && "Something went wrong!",
+        text: description,
         footer: "<a href>Why do I have this issue?</a>"
     })
 }

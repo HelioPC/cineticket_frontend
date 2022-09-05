@@ -1,8 +1,16 @@
+import { useNavigate } from "react-router-dom";
+import { BsStar, BsFillBookmarkFill } from "react-icons/bs";
+import { ImTicket } from "react-icons/im";
+import { truncate } from "../../helpers/string";
+
+
 type Props = {
     imageUrl: string;
     title: string;
     type: number[];
     url: string;
+    releaseDate: string;
+    category: number[];
 }
 
 const MovieType: any = {
@@ -27,19 +35,46 @@ const MovieType: any = {
     37: 'Western'
 }
 
-const MovieCard = ({ imageUrl, title, type, url }: Props) => {
-    return (
-        <div className='flex flex-col md:flex-[20%] md:max-w-[20%] flex-[40%] max-w-[40%] gap-y-5'>
-            <img
-                src={imageUrl}
-                className='hover:scale-105 duration-500 cursor-pointer h-[252px] w-full rounded-md shadow-black shadow-2xl align-middle'
-                alt={title}
-            />
+const MovieCard = ({ imageUrl, title, type, url, releaseDate, category }: Props) => {
+	const navigate = useNavigate();
+	
+	return (
+		<div className="movie-card" onClick={() => navigate(`/reserva/${title}`)}>
 
-            <a href='/' className='font-bold text-[#CCC] hover:text-[#E50914] text-ellipsis overflow-hidden whitespace-nowrap cursor-pointer'>{title}</a>
-            <p className='text-sm text-[#999]'>{type.map(item => MovieType[item]).join(', ')}</p>
-        </div>
-    );
+			<div className="card-head">
+				<img src={imageUrl} alt="" className="card-img transition-all duration-500 ease-in-out" />
+
+				<div className="card-overlay transition-all duration-500 ease-in-out">
+
+					<div className="bookmark">
+						<BsFillBookmarkFill className="bookmark-outline" />
+					</div>
+
+					<div className="rating">
+						<BsStar className="star-outline" />
+						<span>{title.length}</span>
+					</div>
+
+					<div className="play">
+						<ImTicket size={24} />
+					</div>
+
+				</div>
+			</div>
+
+			<div className="card-body">
+				<h3 className="card-title">{truncate(title, 16)}</h3>
+
+				<div className="card-info">
+					<span className="genre">
+						{category.slice(0, 2).map(item => MovieType[item]).join(', ')}
+					</span>
+					<span className="year">{releaseDate.slice(0, 4)}</span>
+				</div>
+			</div>
+
+		</div>
+	);
 }
 
 export default MovieCard;
