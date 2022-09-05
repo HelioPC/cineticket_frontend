@@ -61,11 +61,11 @@ const Sidebar = () => {
     const { width } = useWindowDimensions();
     const navigate = useNavigate();
     const menu = [
-        {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: `/profile/${user.email.replaceAll(' ', '')}/cinemas`},
-        {title: 'Filmes', icon: <MdLocalMovies size={iconSize} />, link: `/profile/${user.email.replaceAll(' ', '')}/movies`},
-        {title: 'Funcionários', icon: <FiUsers size={iconSize - 3} />, link: `/profile/${user.email.replaceAll(' ', '')}/users`},
-        {title: 'Reservas', icon: <BsReverseLayoutTextSidebarReverse size={iconSize - 3} />, link: `/profile/${user.email.replaceAll(' ', '')}/reservations`},
-        {title: 'Sessões', icon: <BsClockFill size={iconSize - 3} />, link: `/profile/${user.email.replaceAll(' ', '')}/session`}
+        {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/cinemas`},
+        {title: 'Filmes', icon: <MdLocalMovies size={iconSize} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/movies`},
+        {title: 'Funcionários', icon: <FiUsers size={iconSize - 3} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/users`},
+        {title: 'Reservas', icon: <BsReverseLayoutTextSidebarReverse size={iconSize - 3} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/reservations`},
+        {title: 'Sessões', icon: <BsClockFill size={iconSize - 3} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/session`}
     ];
 
     useEffect(() => {
@@ -103,7 +103,7 @@ const Sidebar = () => {
                     onClick={() => setOpen(!open)}
                 />
 
-                <SidebarHeader open={open} name={user.email} onClick={() => navigate(`/profile/${user.email.replaceAll(' ', '')}`)} />
+                <SidebarHeader open={open} name={user.name} onClick={() => navigate(`/profile/${user.email.replaceAll(' ', '')}`)} />
 
                 <ul className='pt-6'>
                     {menu.map((item, index) => (

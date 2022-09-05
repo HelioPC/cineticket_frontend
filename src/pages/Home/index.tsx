@@ -2,15 +2,13 @@ import Header from "../../components/Header";
 import { FaFacebookF, FaInstagram, FaTwitter, FaPhone } from "react-icons/fa";
 
 import { useEffect, useState } from "react";
-import api, { API_BASE, API_KEY } from "../../api";
 import { Movie, MovieProps, MyList } from "../../types";
 import { Loading } from "../../components/Utils";
 import MovieCard from "../../components/MovieCard";
 import '../../assets/styles/main.css';
 import '../../assets/styles/media.css';
 import MainMovie from "../../components/MainMovie";
-import YouTube from "react-youtube";
-import { GENRES } from "../../data/data";
+import { BACKENDADDRESS, GENRES } from "../../data/data";
 
 
 const SocialsList = () => {
@@ -41,7 +39,6 @@ const SocialsList = () => {
 }
 
 const Home = () => {
-    const [movies, setMovies] = useState<MyList[]>([]);
     const [filteredMovies, setFilteredMovies] = useState<MovieProps[]>([]);
     const [selectedGenre, setSelectedGenre] = useState<string>("");
     const [selectedYear, setSelectedYear] = useState<string>("");
@@ -52,7 +49,7 @@ const Home = () => {
 
 			if(backendMovies.length !== 0) return;
 
-			const req = await fetch('http://192.168.43.35/cineticket/filmes/exibicao');
+			const req = await fetch(`${BACKENDADDRESS}cineticket/filmes/exibicao`);
 			const json = await req.json();
 
 			json.map((item: MovieProps) => {

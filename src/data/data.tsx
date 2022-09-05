@@ -105,5 +105,7 @@ import { CardType } from '../types';
     '53': 'Thriller',
     '10752': 'War',
     '37': 'Western'
-}
+};
+
+export const BACKENDADDRESS = 'http://192.168.137.1/';
   

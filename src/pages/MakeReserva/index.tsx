@@ -6,7 +6,7 @@ import { ImTicket } from "react-icons/im";
 import api from "../../api";
 import Header from "../../components/Header";
 import { Loading } from "../../components/Utils";
-import { GENRES } from "../../data/data";
+import { BACKENDADDRESS, GENRES } from "../../data/data";
 import { CinemaProps, LugarType, Movie, MovieProps, MyList, SessionType } from "../../types";
 import Modal from "../../components/Modal";
 import SelectPlace from "../../components/SelectPlace";
@@ -100,7 +100,8 @@ const MakeReserva = () => {
 
     useEffect(() => {
         const getMovies = async () => {
-			const req = await fetch('http://192.168.43.35/cineticket/filmes');
+			//const req = await fetch('http://192.168.43.35/cineticket/filmes'); await fetch(`${BACKENDADDRESS}`);
+            const req = await fetch(`${BACKENDADDRESS}cineticket/filmes`);
 			const json = await req.json();
 
 			json.map(async (item: MovieProps) => {
@@ -109,7 +110,8 @@ const MakeReserva = () => {
                     setMovie(item);
                     let selectedMovie: MovieProps = item;
 
-                    const req1 = await fetch(`http://192.168.43.35/cineticket/filmes/${selectedMovie.ID_FILME}/sessoes`);
+                    //const req1 = await fetch(`http://192.168.43.35/cineticket/filmes/${selectedMovie.ID_FILME}/sessoes`);
+                    const req1 = await fetch(`${BACKENDADDRESS}cineticket/filmes/${selectedMovie.ID_FILME}/sessoes`);
                     const json1 = await req1.json();
 
                     if(sessions.length === 0) {
@@ -125,8 +127,8 @@ const MakeReserva = () => {
     } , []);
 
     const getLugares = async (id: string) => {
-
-        const req2 = await fetch(`http://192.168.43.35/cineticket/sessoes/${id}/lugares`);
+        //const req2 = await fetch(`http://192.168.43.35/cineticket/sessoes/${id}/lugares`);
+        const req2 = await fetch(`${BACKENDADDRESS}cineticket/sessoes/${id}/lugares`);
         const json2 = await req2.json();
 
         if(lugares.length === 0) {
@@ -151,6 +153,7 @@ const MakeReserva = () => {
         await getLugares(session.ID);
         setPrice(parseInt(session.PRECO));
 
+        console.log(lugares);
         if(lugares.length !== 0) setOpen(true);
     }
 

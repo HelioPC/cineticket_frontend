@@ -7,6 +7,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import axios from 'axios';
 import { Loading } from '../Utils';
 import { AlertError, AlertSuccess } from '../Alerts';
+import { BACKENDADDRESS } from '../../data/data';
 
 type FormValues = {
     name: string;
@@ -58,7 +59,7 @@ const NewCinema = ({ cidades, ruas, setOpen, setCidade }: NewCinemaProps) => {
         axios({
             method: 'POST',
             data: data,
-            url: 'http://192.168.43.35/cineticket/cinemas/store',
+            url: `${BACKENDADDRESS}cineticket/cinemas/store`,
             headers: { "Content-Type": "multipart/form-data" },
         })
         .then(function (response) {

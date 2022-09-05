@@ -18,8 +18,6 @@ import Reservas from "./pages/Reservas";
 import Sessions from "./pages/Sessions";
 
 const App = () => {
-    const { user } = useUser();
-
 	return (
 		<BrowserRouter>
             <Routes>

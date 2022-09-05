@@ -19,14 +19,13 @@ import { BsTrashFill, BsPersonCircle } from 'react-icons/bs';
 import { FaEdit } from 'react-icons/fa';
 
 import { EditMovieProps, MovieProps, MyList } from '../../types';
-import api from '../../api';
 import { Loading } from '../Utils';
 
 import { SelectChangeEvent } from '@mui/material/Select';
 import Modal from '../Modal';
 import axios from "axios";
 import { AlertSuccess } from '../Alerts/';
-import { GENRES } from '../../data/data';
+import { BACKENDADDRESS, GENRES } from '../../data/data';
 
 const EditMovie = ({ id, title, description, release_date, poster_path, genreId }: EditMovieProps) => {
 	const [open, setOpen] = useState(false);
@@ -109,35 +108,17 @@ export const MoviesList = () => {
 	const [selectedMoviesIds, setSelectedMoviesIds] = useState<number[]>([]);
 	const [limit, setLimit] = useState(10);
 	const [page, setPage] = useState(0);
-	const [movies, setMovies] = useState<MyList[]>([]);
 	const [movie, setMovie] = useState<EditMovieProps>();
 	const [backendMovies, setBackendMovies] = useState<MovieProps[]>([]);
 	const [open, setOpen] = useState(false);
 
 	useEffect(() => {
-		const loadMovies = async () => {
-			let list: MyList[] = await api.getHomeList();
-
-            // Remove results whose results doen't have a first_air_date
-            list = list.filter(item => item.items.results.filter(result => result.first_air_date === undefined).length > 0);
-
-            // Also remove results with no poster_path and empty overview
-            list = list.filter(item => item.items.results.filter(result => result.poster_path === null || result.overview === "").length === 0);
-
-            // Pop elements with first_air_date
-            list = list.map(item => {
-                item.items.results = item.items.results.filter(result => result.first_air_date === undefined);
-                return item;
-            });
-
-			setMovies(list);
-		}
-
 		const getMovies = async () => {
 
 			if(backendMovies.length !== 0) return;
 
-			const req = await fetch('http://192.168.43.35/cineticket/filmes');
+			//const req = await fetch('http://192.168.43.35/cineticket/filmes');
+			const req = await fetch(`${BACKENDADDRESS}cineticket/filmes`);
 			const json = await req.json();
 
 			json.map((item: MovieProps) => {
@@ -157,8 +138,6 @@ export const MoviesList = () => {
 		}
 
 		getMovies();
-
-		loadMovies();
 	} , []);
 
 
@@ -173,37 +152,6 @@ export const MoviesList = () => {
 
 		setSelectedMoviesIds(newSelectedMoviesIds);
 	};
-
-	const handleSubmit = ({ title, description, genreId, release_date, poster_path  }: EditMovieProps) => {
-		const data = new FormData();
-		data.append('titulo', title);
-		data.append('genero', GENRES[genreId.toString()]);
-		data.append('ano', release_date.slice(0, 4));
-		data.append('descricao', description);
-		data.append('capa', poster_path);
-		data.append('classificacao', '16');
-
-		console.log(data.values());
-
-		axios({
-			method: 'POST',
-			data: data,
-			url: 'http://192.168.43.35/cineticket/filmes/store',
-			headers: { "Content-Type": "multipart/form-data" },
-		})
-		.then(function (response) {
-			//handle success
-			AlertSuccess({
-				title: 'Success',
-				description: 'Report sent successfully!'
-			});
-			console.log(response);
-		})
-		.catch(function (response) {
-			//handle error
-			console.log(response);
-		});
-	}
 
 	const handleSelectOne = (event: React.ChangeEvent<HTMLInputElement>, id: number) => {
 		const selectedIndex = selectedMoviesIds.indexOf(id);

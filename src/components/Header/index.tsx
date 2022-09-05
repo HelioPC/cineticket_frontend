@@ -57,24 +57,28 @@ const Header = ({ classProp }: HeaderProps) => {
 
     return (
         <header className={`h-20 w-full flex items-center md:justify-start justify-between text-white py-4 sm:px-32 px-5 gap-x-5 fixed top-0 left-0 right-0 z-10 duration-500 ${color ? 'bg-transparent' : 'bg-[rgba(0,0,0,.7)] backdrop-blur-md'} ${classProp}`}>
-            <div
-                className="p-3 rounded-full cursor-pointer sm:mx-10 mx-0"
-            >
-                <Logo2 />
+            <div className='w-full'>
+                <div className='w-full flex'>
+                    <div
+                        className="p-3 rounded-full cursor-pointer sm:mx-10 mx-0"
+                    >
+                        <Logo2 />
+                    </div>
+                    <ul
+                        className="
+                            md:flex hidden list-none flex-row
+                            justify-space-between items-center
+                            flex-initial
+                        "
+                    >
+                        {
+                            headerElements.map((item, index) => (
+                                <NavbarItem title={item.title} url={item.url} key={index} />
+                            ))
+                        }
+                    </ul>
+                </div>
             </div>
-            <ul
-                className="
-                    md:flex hidden list-none flex-row
-                    justify-space-between items-center
-                    flex-initial
-                "
-            >
-                {
-                    headerElements.map((item, index) => (
-                        <NavbarItem title={item.title} url={item.url} key={index} />
-                    ))
-                }
-            </ul>
             <div className="flex relative">
                 {toggleMenu
                     ?

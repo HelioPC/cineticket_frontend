@@ -1,69 +1,10 @@
-/*-------------------------------------*\
-  #main.css
-\*-------------------------------------*/
-
-/**
- * copyright 2021 @codewithsadee 
- */
-
-
-
-
-
-/*-------------------------------------*\
-  #VARIABLES
-\*-------------------------------------*/
-
-/**
- * import variables.css file 
- */
-
- @import url(./variable.css);
-
-
-
-
-
- /*-------------------------------------*\
-   #RESET
- \*-------------------------------------*/
- 
- /**
-  * import reset.css file 
-  */
- 
+@import url(./variable.css);
  @import url(./reset.css);
- 
- 
- 
- 
- 
- /*-------------------------------------*\
-   #REPEAT
- \*-------------------------------------*/
- 
- /**
-  * reused style
-  */
- 
- 
+
  .banner,
 .category {
    padding: 0 var(--px);
  }
- 
- 
- 
- 
- 
- /*-------------------------------------*\
-   #MAIN
- \*-------------------------------------*/
-  
- 
- 
- 
- 
 
  .first-look {
   height: 110vh;
@@ -237,9 +178,6 @@
  }
  
  .movie-card {
-   /**
-    * variable for scaling overlay element on card hover 
-    */
    --scale: 0.8;
  
    cursor: pointer;
@@ -405,14 +343,6 @@
  
  .category-card:hover .name { color: var(--light-azure); }
  
- 
- 
- 
- 
- /*-------------------------------------*\
-   #LIVE SECTION
- \*-------------------------------------*/
- 
  .live { margin-bottom: 60px; }
  
  .live-grid {
@@ -500,14 +430,6 @@
  }
  
  .live-card:hover .card-title { color: var(--light-azure); }
- 
- 
- 
- 
- 
- /*-------------------------------------*\
-   #FOOTER SECTION
- \*-------------------------------------*/
  
  footer {
    background: var(--rich-black-fogra-30);

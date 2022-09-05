@@ -5,6 +5,7 @@ import {
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { BACKENDADDRESS } from '../../data/data';
 import { strToDate, addZeroToDate, formatDate } from '../../helpers/date';
 import { CinemaProps, MovieProps } from '../../types';
 import { AlertError, AlertSuccess } from '../Alerts';
@@ -57,7 +58,7 @@ const NewSessions = ({ setOpen }: Props) => {
         axios({
             method: 'POST',
             data: data,
-            url: 'http://192.168.43.35/cineticket/sessoes/store',
+            url: `${BACKENDADDRESS}cineticket/sessoes/store`,
             headers: { "Content-Type": "multipart/form-data" },
         })
         .then(function (response) {
@@ -80,7 +81,7 @@ const NewSessions = ({ setOpen }: Props) => {
 
             if(backendMovies.length !== 0) return;
     
-            const req = await fetch('http://192.168.43.35/cineticket/filmes');
+            const req = await fetch(`${BACKENDADDRESS}cineticket/filmes`);
             const json = await req.json();
     
             if(backendMovies.length === 0) {
@@ -102,7 +103,7 @@ const NewSessions = ({ setOpen }: Props) => {
         }
 
         const getCinemas = async () => {
-			const req = await fetch('http://192.168.43.35/cineticket/cinemas');
+			const req = await fetch(`${BACKENDADDRESS}cineticket/cinemas`);
 			const json = await req.json();
 
 			if(cinemas.length === 0) {
@@ -127,7 +128,7 @@ const NewSessions = ({ setOpen }: Props) => {
         const getSalas = async () => {
             if(selectedCinema === '') return;
             
-            const req = await fetch(`http://192.168.43.35/cineticket/cinemas/${selectedCinema}/salas`);
+            const req = await fetch(`${BACKENDADDRESS}cineticket/cinemas/${selectedCinema}/salas`);
 			const json = await req.json();
 
             if(salas.length === 0) {

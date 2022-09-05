@@ -1,11 +1,5 @@
 import { createContext, useReducer, useContext } from "react";
-
-type User = {
-    id: number;
-    name: string;
-    email: string;
-    password: string;
-}
+import { User } from "../types";
 
 export enum UserActions {
     setUser,

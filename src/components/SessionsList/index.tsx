@@ -21,6 +21,7 @@ import NewCinema from '../NewCinema';
 import Modal from '../Modal';
 import { Loading } from '../Utils';
 import NewSessions from '../NewSessions';
+import { BACKENDADDRESS } from '../../data/data';
 
 const SessionsList = () => {
     const [selectedSessionIds, setSelectedSessionIds] = useState<number[]>([]);
@@ -31,7 +32,7 @@ const SessionsList = () => {
 
     useEffect(() => {
         const getSessions = async () => {
-            const req = await fetch('http://192.168.43.35/cineticket/sessoes');
+            const req = await fetch(`${BACKENDADDRESS}cineticket/sessoes`);
             const json = await req.json();
 
             if(sessions.length === 0) {

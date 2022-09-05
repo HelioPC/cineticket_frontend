@@ -8,6 +8,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { AlertError, AlertSuccess } from '../Alerts'
+import { BACKENDADDRESS } from '../../data/data';
 
 type Props = {
     setOpen: (open: boolean) => void;
@@ -63,7 +64,7 @@ const NewMovie = ({ setOpen }: Props) => {
         axios({
             method: 'POST',
             data: data,
-            url: 'http://192.168.43.35/cineticket/filme/store',
+            url: `${BACKENDADDRESS}cineticket/filmes/store`,
             headers: { "Content-Type": "multipart/form-data" },
         })
         .then(function (response) {

@@ -14,7 +14,7 @@ const SelectPlace = (prop: Props) => {
     console.log(prop.lugares);
     const [selectedPlaces, setSelectedPlaces] = useState<string[]>([]);
     const [name, setName] = useState<string>("");
-    const [phone, setPhone] = useState<string>("");
+    const [phone, setPhone] = useState<string>("0");
 
     const handleSelectPlace = (place: string, estado: string) => {
         if (estado === "1") return;

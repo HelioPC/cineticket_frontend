@@ -92,3 +92,34 @@ export type LugarType = {
     ID_SESSAO: string,
     ESTADO: string
 }
+
+export type User = {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+}
+
+/*
+{
+    "ID_RESERVA":"261",
+    "CLIENTE":"Kiesse",
+    "FILME":"Jurassic World Dominion",
+    "DATA":"25-08-2022 19:00",
+    "LUGARES":"1",
+    "CINEMA":"CineTicket Camama",
+    "SALA":"C2",
+    "ESTADO":"0"
+}
+*/
+
+export type ReservaType = {
+    ID_RESERVA: string;
+    CLIENTE: string;
+    FILME: string;
+    DATA: string;
+    LUGARES: string;
+    CINEMA: string;
+    SALA: string;
+    ESTADO: string;
+}

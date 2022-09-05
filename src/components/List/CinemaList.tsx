@@ -12,10 +12,9 @@ import {
     TableHead,
     TablePagination,
     TableRow,
-    Tooltip,
-    FormControl, InputLabel, MenuItem, Select, TextareaAutosize, TextField
+    Tooltip
 } from '@mui/material';
-import { BsTrashFill, BsPersonCircle } from 'react-icons/bs';
+import { BsTrashFill } from 'react-icons/bs';
 import { FaEdit } from 'react-icons/fa';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
@@ -23,6 +22,7 @@ import Modal from '../Modal';
 import NewCinema from '../NewCinema';
 import FloatingAddButton from '../FloatingAddButton';
 import { CinemaProps, RuaProps, CidadeProps } from '../../types';
+import { BACKENDADDRESS } from '../../data/data';
 
 const CinemaList = () => {
     const [selectedCinemaIds, setSelectedCinemaIds] = useState<number[]>([]);
@@ -39,7 +39,7 @@ const CinemaList = () => {
     useEffect(() => {
         // Get cidades
         const getCidades = async () => {
-            const req = await fetch('http://192.168.43.35/cineticket/cidades');
+            const req = await fetch(`${BACKENDADDRESS}cineticket/cidades`);
             const json = await req.json();
 
             json.map((cidade: CidadeProps) => {
@@ -55,7 +55,7 @@ const CinemaList = () => {
     useEffect(() => {
         // Get ruas
         const getRuas = async () => {
-                const req = await fetch(`http://192.168.43.35/cineticket/ruas`);
+                const req = await fetch(`${BACKENDADDRESS}cineticket/ruas`);
                 const json = await req.json();
 
                 if(ruas.length === 0) {
@@ -71,7 +71,7 @@ const CinemaList = () => {
     useEffect(() => {
 
 		const getCinemas = async () => {
-			const req = await fetch('http://192.168.43.35/cineticket/cinemas');
+			const req = await fetch(`${BACKENDADDRESS}cineticket/cinemas`);
 			const json = await req.json();
 
 			json.map((item: CinemaProps) => {
