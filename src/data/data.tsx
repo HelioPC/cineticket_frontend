@@ -107,5 +107,5 @@ import { CardType } from '../types';
     '37': 'Western'
 };
 
-export const BACKENDADDRESS = 'http://192.168.137.1/';
+export const BACKENDADDRESS = 'http://10.202.1.64/';
   

@@ -15,6 +15,7 @@ import {
     Tooltip,
     FormControl, InputLabel, MenuItem, Select, TextareaAutosize, TextField
 } from '@mui/material';
+import { AiFillCheckCircle, AiFillCloseCircle } from 'react-icons/ai';
 import { BsTrashFill, BsPersonCircle } from 'react-icons/bs';
 import { FaEdit } from 'react-icons/fa';
 
@@ -26,17 +27,29 @@ import Modal from '../Modal';
 import axios from "axios";
 import { AlertSuccess } from '../Alerts/';
 import { BACKENDADDRESS, GENRES } from '../../data/data';
+import { useUser } from '../../contexts/UserContext';
+/*
+/cineticket/reservas/eliminar
+/cineticket/reservas/confirmar
+/cineticket/reservas/cancelar
+*/
 
 type ReservaState = {
 	estado: string;
 }
 
+type HandleReservaAction = {
+	id: string;
+	id_funcionario?: string;
+	action: string;
+}
+
 const Estado = ({ estado }: ReservaState) => {
 	return (
 		<div className={`
-				px-3 py-2 rounded-md text-center text-white shadow-md
+				px-1 py-2 rounded-md text-center text-white shadow-md
 				${(estado === '1') && 'bg-green-600'}
-				${(estado === '0') && 'bg-orange-600'}
+				${(estado === '0') && 'bg-blue-600'}
 				${(estado === '-1') && 'bg-red-600'}
 			`}
 		>
@@ -58,6 +71,7 @@ const ReservaList = () => {
 	const [limit, setLimit] = useState(10);
 	const [page, setPage] = useState(0);
 	const [reservas, setReservas] = useState<ReservaType[]>([]);
+	const { user } = useUser();
 
 	useEffect(() => {
 		const getMovies = async () => {
@@ -88,6 +102,50 @@ const ReservaList = () => {
 
 		getMovies();
 	} , []);
+
+	const handleReservaAction = async ({ id, action, id_funcionario }: HandleReservaAction) => {
+		const data = new FormData();
+		
+		if(id_funcionario !== undefined) {
+			data.append('id_reserva', id);
+			data.append('id_funcionario', id_funcionario);
+
+			axios({
+				method: 'POST',
+				data: data,
+				headers: { "Content-Type": "multipart/form-data" },
+				url: `${BACKENDADDRESS}cineticket/reservas/${action}`
+			}).then(function (response) {
+				console.log(response);
+				AlertSuccess({
+					title: "Reserva Eliminada",
+					description: `A reserva ${id} foi eliminada com sucesso`,
+					confirm: () => {window.location.reload();}
+				});
+			}).catch(function (response) {
+				// Handle error
+				console.log(response);
+			});
+		} else {
+			data.append('id_reserva', id);
+
+			axios({
+				method: 'POST',
+				data: data,
+				headers: { "Content-Type": "multipart/form-data" },
+				url: `${BACKENDADDRESS}cineticket/reservas/${action}`
+			}).then(function (response) {
+				AlertSuccess({
+					title: `Reserva ${action === 'confirmar' ? 'confirmada' : 'cancelada'}`,
+					description: `A reserva ${id} foi ${action === 'confirmar' ? 'confirmada' : 'cancelada'} com sucesso`,
+					confirm: () => {window.location.reload();}
+				});
+			}).catch(function (response) {
+				// Handle error
+				console.log(response);
+			});
+		}
+	}
 
 
 	const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,30 +236,55 @@ const ReservaList = () => {
 								hover
 								key={index}
 								selected={selectedReservasIds.indexOf(index) !== -1}
-								className='cursor-pointer'
 							>
 								<TableCell>{res.ID_RESERVA}</TableCell>
 								<TableCell>{res.CLIENTE}</TableCell>
-								<TableCell>{res.FILME}</TableCell>
-								<TableCell>{res.DATA}</TableCell>
-								<TableCell>{res.SALA}</TableCell>
-								<TableCell>{res.CINEMA}</TableCell>
 								<TableCell>
+									<div className="w-10">
+										<p>{res.FILME}</p>
+									</div>
+								</TableCell>
+								<TableCell className='w-40'>{res.DATA}</TableCell>
+								<TableCell>{res.SALA}</TableCell>
+								<TableCell>
+									<div className='w-10'>
+										<p>{res.CINEMA}</p>
+									</div>
+								</TableCell>
+								<TableCell className="w-10">
 									<Estado estado={res.ESTADO} />
 								</TableCell>
 								<TableCell>
-									<div className='flex'>
-										<Tooltip title='Delete' arrow placement='top'>
-											<button className='cursor-pointer'>
-												<BsTrashFill className='text-[#A00]' size={18} />
-											</button>
-										</Tooltip>
-										<Tooltip title='Edit' arrow placement='top'>
+									<div className='flex gap-3'>
+										{
+											res.ESTADO === '0' ?
+											(
+												<>
+													<Tooltip title='Confirmar' arrow placement='top'>
+														<button
+															className='cursor-pointer'
+															onClick={() => handleReservaAction({ id: res.ID_RESERVA, action: 'confirmar' })}
+														>
+															<AiFillCheckCircle className='text-green-600 hover:text-green-800' size={24} />
+														</button>
+													</Tooltip>
+													<Tooltip title='Cancelar' arrow placement='top'>
+														<button
+															className='cursor-pointer'
+															onClick={() => handleReservaAction({ id: res.ID_RESERVA, action: 'cancelar' })}
+														>
+															<AiFillCloseCircle className='text-orange-400 hover:text-orange-600' size={24} />
+														</button>
+													</Tooltip>
+												</>
+											) : null
+										}
+										<Tooltip title='Eliminar' arrow placement='top'>
 											<button
-												className='cursor-pointer ml-5'
-												onClick={() => {}}
+												className='cursor-pointer'
+												onClick={() => handleReservaAction({ id: res.ID_RESERVA, action: 'eliminar', id_funcionario: user.id.toString() })}
 											>
-												<FaEdit className='text-[#00A]' size={18} />
+												<BsTrashFill className='text-red-600 hover:text-red-800' size={24} />
 											</button>
 										</Tooltip>
 									</div>
