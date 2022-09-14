@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
 import {
-    Avatar,
-    Box,
-    Card,
     Checkbox,
     Paper,
     Table,
@@ -12,21 +9,16 @@ import {
     TableHead,
     TablePagination,
     TableRow,
-    Tooltip,
-    FormControl, InputLabel, MenuItem, Select, TextareaAutosize, TextField
+    Tooltip
 } from '@mui/material';
 import { AiFillCheckCircle, AiFillCloseCircle } from 'react-icons/ai';
-import { BsTrashFill, BsPersonCircle } from 'react-icons/bs';
-import { FaEdit } from 'react-icons/fa';
+import { BsTrashFill } from 'react-icons/bs';
 
 import { ReservaType } from '../../types';
-import { Loading } from '../Utils';
 
-import { SelectChangeEvent } from '@mui/material/Select';
-import Modal from '../Modal';
 import axios from "axios";
 import { AlertSuccess } from '../Alerts/';
-import { BACKENDADDRESS, GENRES } from '../../data/data';
+import { BACKENDADDRESS } from '../../data/dummy';
 import { useUser } from '../../contexts/UserContext';
 /*
 /cineticket/reservas/eliminar
@@ -74,7 +66,7 @@ const ReservaList = () => {
 	const { user } = useUser();
 
 	useEffect(() => {
-		const getMovies = async () => {
+		const getReservas = async () => {
 
 			if(reservas.length !== 0) return;
 
@@ -100,7 +92,7 @@ const ReservaList = () => {
 			console.log(reservas);
 		}
 
-		getMovies();
+		getReservas();
 	} , []);
 
 	const handleReservaAction = async ({ id, action, id_funcionario }: HandleReservaAction) => {
@@ -240,18 +232,18 @@ const ReservaList = () => {
 								<TableCell>{res.ID_RESERVA}</TableCell>
 								<TableCell>{res.CLIENTE}</TableCell>
 								<TableCell>
-									<div className="w-10">
+									<div className="w-24">
 										<p>{res.FILME}</p>
 									</div>
 								</TableCell>
-								<TableCell className='w-40'>{res.DATA}</TableCell>
+								<TableCell>{res.DATA}</TableCell>
 								<TableCell>{res.SALA}</TableCell>
 								<TableCell>
-									<div className='w-10'>
+									<div className='w-24'>
 										<p>{res.CINEMA}</p>
 									</div>
 								</TableCell>
-								<TableCell className="w-10">
+								<TableCell>
 									<Estado estado={res.ESTADO} />
 								</TableCell>
 								<TableCell>

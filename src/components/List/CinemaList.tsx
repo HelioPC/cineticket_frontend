@@ -22,7 +22,7 @@ import Modal from '../Modal';
 import NewCinema from '../NewCinema';
 import FloatingAddButton from '../FloatingAddButton';
 import { CinemaProps, RuaProps, CidadeProps } from '../../types';
-import { BACKENDADDRESS } from '../../data/data';
+import { BACKENDADDRESS } from '../../data/dummy';
 
 const CinemaList = () => {
     const [selectedCinemaIds, setSelectedCinemaIds] = useState<number[]>([]);

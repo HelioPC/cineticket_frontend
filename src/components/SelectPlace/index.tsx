@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { BACKENDADDRESS } from "../../data/data";
+import { BACKENDADDRESS } from "../../data/dummy";
 import { LugarType } from "../../types";
 import { AlertError, AlertSuccess } from "../Alerts";
 

@@ -7,6 +7,7 @@ import { AiOutlineClose } from 'react-icons/ai';
 import { BsReverseLayoutTextSidebarReverse, BsClockFill } from 'react-icons/bs';
 import { FaTheaterMasks } from 'react-icons/fa';
 import { FiMenu, FiUsers } from 'react-icons/fi';
+import { ImProfile } from 'react-icons/im';
 import { MdKeyboardArrowLeft, MdLocalMovies, MdLogout } from 'react-icons/md';
 // Auxiliary functions
 import { useWindowDimensions } from '../../helpers/dimensions';
@@ -61,6 +62,7 @@ const Sidebar = () => {
     const { width } = useWindowDimensions();
     const navigate = useNavigate();
     const menu = [
+        {title: `Eu ${user.name}`, icon: <ImProfile size={iconSize - 3} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/me`},
         {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/cinemas`},
         {title: 'Filmes', icon: <MdLocalMovies size={iconSize} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/movies`},
         {title: 'Funcionários', icon: <FiUsers size={iconSize - 3} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/users`},

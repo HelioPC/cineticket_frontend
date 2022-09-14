@@ -8,7 +8,7 @@ import MovieCard from "../../components/MovieCard";
 import '../../assets/styles/main.css';
 import '../../assets/styles/media.css';
 import MainMovie from "../../components/MainMovie";
-import { BACKENDADDRESS, GENRES } from "../../data/data";
+import { BACKENDADDRESS, GENRES } from "../../data/dummy";
 
 
 const SocialsList = () => {
@@ -104,15 +104,18 @@ const Home = () => {
     console.log(backendMovies);
 
     return (
-        <div className="w-screen bg-[#111] sm:pt-0 pt-40 scroll">
+        <div className="w-screen min-h-screen bg-[#111] sm:pt-0 pt-40 scroll">
             <Header />
             <SocialsList />
 
-            <MainMovie
-                image={`${backendMovies[0].CAPA_URL}`}
-                title={backendMovies[0].TITULO}
-                releaseDate={backendMovies[0].DESCRICAO}
-            />
+            {
+                backendMovies.length !== 0 &&
+                <MainMovie
+                    image={`${backendMovies[0].CAPA_URL}`}
+                    title={backendMovies[0].TITULO}
+                    releaseDate={backendMovies[0].DESCRICAO}
+                />
+            }
 
             <div className="sm:px-16 px-10">
                 <div className="filter-bar">
@@ -177,7 +180,7 @@ const Home = () => {
                             />
                         ))
                         :
-                        <div>Error</div>
+                        <div>Olá</div>
                     }
                 </div>
             </main>

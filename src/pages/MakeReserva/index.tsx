@@ -6,95 +6,17 @@ import { ImTicket } from "react-icons/im";
 import api from "../../api";
 import Header from "../../components/Header";
 import { Loading } from "../../components/Utils";
-import { BACKENDADDRESS, GENRES } from "../../data/data";
+import { BACKENDADDRESS, GENRES } from "../../data/dummy";
 import { CinemaProps, LugarType, Movie, MovieProps, MyList, SessionType } from "../../types";
 import Modal from "../../components/Modal";
 import SelectPlace from "../../components/SelectPlace";
-
-type SessionProps = {
-    ID_SESSAO: string;
-    ID_SALA: string;
-    ID_FILME: string;
-    ESTADO: string;
-    HORARIO: string;
-    PRECO: string;
-}
-
-const SESSOES: SessionProps[] = [
-    {
-        ID_SESSAO: '',
-        ID_SALA: '7',
-        ID_FILME: '',
-        ESTADO: '',
-        HORARIO: '2022-12-12',
-        PRECO: '8000 kz'
-    },
-    {
-        ID_SESSAO: '',
-        ID_SALA: '7',
-        ID_FILME: '',
-        ESTADO: '',
-        HORARIO: '2022-12-12',
-        PRECO: '8000 kz'
-    },
-    {
-        ID_SESSAO: '',
-        ID_SALA: '7',
-        ID_FILME: '',
-        ESTADO: '',
-        HORARIO: '2022-12-12',
-        PRECO: '8000 kz'
-    },
-    {
-        ID_SESSAO: '',
-        ID_SALA: '7',
-        ID_FILME: '',
-        ESTADO: '',
-        HORARIO: '2022-12-12',
-        PRECO: '8000 kz'
-    }
-];
-
-type ReservaProp = {
-    
-}
-
-const CINEMAS: CinemaProps[] = [
-    {
-        ID_CINEMA: 'Luanda',
-        NOME: '',
-        LOCALIZACAO: ''
-    },
-    {
-        ID_CINEMA: 'Benguela',
-        NOME: '',
-        LOCALIZACAO: ''
-    },
-    {
-        ID_CINEMA: 'Lubango',
-        NOME: '',
-        LOCALIZACAO: ''
-    },
-    {
-        ID_CINEMA: 'Huambo',
-        NOME: '',
-        LOCALIZACAO: ''
-    },
-    {
-        ID_CINEMA: 'Namibe',
-        NOME: '',
-        LOCALIZACAO: ''
-    }
-];
 
 const MakeReserva = () => {
     const path = useParams();
     const [selectedCinema, setSelectedCinema] = useState('');
     const [open, setOpen] = useState(false);
     const [movie, setMovie] = useState<MovieProps>();
-    const [cinemas, setCinemas] = useState<CinemaProps[]>([]);
     const [sessions, setSessions] = useState<SessionType[]>([]);
-    const [selectedSession, setSelectedSession] = useState<SessionType>();
     const [lugares, setLugares] = useState<LugarType[]>([]);
     const [price, setPrice] = useState(0);
 
@@ -154,10 +76,15 @@ const MakeReserva = () => {
         setPrice(parseInt(session.PRECO));
 
         console.log(lugares);
-        if(lugares.length !== 0) setOpen(true);
+        //if(lugares.length !== 0) setOpen(true); //See the useEffect 👇🏽
     }
 
+    useEffect(() => {
+        if(lugares.length !== 0) setOpen(true);
+    }, [lugares]);
+
     if(!movie || sessions.length === 0) return <Loading text="Getting the movie..." />;
+    if(lugares.length === 0 && open) return <Loading text="Loading..." />;
     console.log(removeSessionsWithDuplicateCinema(sessions));
 
     return (
@@ -225,11 +152,7 @@ const MakeReserva = () => {
 
                             {
                                 selectedCinema === '' || selectedCinema === 'Selecione o cinema' ?
-                                (
-                                    null
-                                )
-                                :
-                                (
+                                null : (
                                     <div className="w-full h-auto bg-[#FFF] rounded-lg mt-3 p-2">
                                         <TableContainer>
                                             <Table >

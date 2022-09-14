@@ -2,7 +2,7 @@ import Card from "../../components/Card";
 import FilmesMaisAssistidos from "../../components/Charts/Filmes";
 import ReservasChart from "../../components/Charts/Reservas";
 import List from "../../components/List";
-import { cardsData } from '../../data/data';
+import { cardsData } from '../../data/dummy';
 
 const Profile = () => {
     return (

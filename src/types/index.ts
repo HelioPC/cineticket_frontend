@@ -96,8 +96,19 @@ export type LugarType = {
 export type User = {
     id: number;
     name: string;
+    nivel: string;
     email: string;
     password: string;
+}
+
+export type UserType = {
+    ID_FUNCIONARIO: number;
+    NOME: string;
+    EMAIL: string;
+    SENHA: string;
+    NIVEL: string;
+    ID_CINEMA: string;
+    CINEMA: string;
 }
 
 /*
