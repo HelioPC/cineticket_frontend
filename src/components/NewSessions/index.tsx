@@ -5,7 +5,7 @@ import {
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { BACKENDADDRESS } from '../../data/data';
+import { BACKENDADDRESS } from '../../data/dummy';
 import { strToDate, addZeroToDate, formatDate } from '../../helpers/date';
 import { CinemaProps, MovieProps } from '../../types';
 import { AlertError, AlertSuccess } from '../Alerts';

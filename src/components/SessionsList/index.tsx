@@ -21,7 +21,7 @@ import NewCinema from '../NewCinema';
 import Modal from '../Modal';
 import { Loading } from '../Utils';
 import NewSessions from '../NewSessions';
-import { BACKENDADDRESS } from '../../data/data';
+import { BACKENDADDRESS } from '../../data/dummy';
 
 const SessionsList = () => {
     const [selectedSessionIds, setSelectedSessionIds] = useState<number[]>([]);

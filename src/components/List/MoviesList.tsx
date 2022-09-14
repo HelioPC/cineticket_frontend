@@ -25,7 +25,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import Modal from '../Modal';
 import axios from "axios";
 import { AlertSuccess } from '../Alerts/';
-import { BACKENDADDRESS, GENRES } from '../../data/data';
+import { BACKENDADDRESS, GENRES } from '../../data/dummy';
 
 const EditMovie = ({ id, title, description, release_date, poster_path, genreId }: EditMovieProps) => {
 	const [open, setOpen] = useState(false);
@@ -117,7 +117,6 @@ export const MoviesList = () => {
 
 			if(backendMovies.length !== 0) return;
 
-			//const req = await fetch('http://192.168.43.35/cineticket/filmes');
 			const req = await fetch(`${BACKENDADDRESS}cineticket/filmes`);
 			const json = await req.json();
 

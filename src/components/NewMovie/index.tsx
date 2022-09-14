@@ -8,7 +8,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { AlertError, AlertSuccess } from '../Alerts'
-import { BACKENDADDRESS } from '../../data/data';
+import { BACKENDADDRESS } from '../../data/dummy';
 
 type Props = {
     setOpen: (open: boolean) => void;

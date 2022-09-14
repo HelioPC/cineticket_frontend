@@ -7,7 +7,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import axios from 'axios';
 import { Loading } from '../Utils';
 import { AlertError, AlertSuccess } from '../Alerts';
-import { BACKENDADDRESS } from '../../data/data';
+import { BACKENDADDRESS } from '../../data/dummy';
 
 type FormValues = {
     name: string;

@@ -11,6 +11,7 @@ import MakeReserva from "./pages/MakeReserva";
 import Page404 from "./pages/Page404";
 import Profile from "./pages/profile";
 import Cinemas from "./pages/profile/pages/Cinemas";
+import Edit from "./pages/profile/pages/Edit";
 import Movies from "./pages/profile/pages/Movies";
 import Session from "./pages/profile/pages/Session";
 import UsersPage from "./pages/profile/pages/UsersPage";
@@ -34,6 +35,7 @@ const App = () => {
                     <Route path="/profile/:id/users" element={<UsersPage />} />
                     <Route path='/profile/:id/reservations' element={<Reservas />} />
                     <Route path='/profile/:id/session' element={<Session />} />
+                    <Route path="/profile/:id/me" element={<Edit />} />
                     <Route path=":id/*" element={<Page404 />} />
                 </Route>
 

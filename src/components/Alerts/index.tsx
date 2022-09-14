@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 type AlertProps = {
     title: string;
     description: string;
+    confirm?: () => void;
 }
 
 export const AlertError = ({ title, description }: AlertProps) => {
@@ -14,11 +15,11 @@ export const AlertError = ({ title, description }: AlertProps) => {
     })
 }
 
-export const AlertSuccess = ({ title, description }: AlertProps) => {
+export const AlertSuccess = ({ title, description, confirm }: AlertProps) => {
     Swal.fire({
         title: title,
         icon: "success",
         text: description,
         footer: "<a href>Why do I have this issue?</a>"
-    })
+    }).then(confirm).catch(function (error) {console.log(error)});
 }

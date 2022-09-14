@@ -24,7 +24,8 @@ const initialUser: User = {
     id: 0,
     name: '',
     email: '',
-    password: ''
+    password: '',
+    nivel: ''
 }
 
 const UserContext = createContext<ContextType | undefined>(undefined);

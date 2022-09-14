@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AlertError, AlertSuccess } from "../../components/Alerts";
 import { Logo2 } from "../../components/Logo";
 import { UserActions, useUser } from "../../contexts/UserContext";
-import { BACKENDADDRESS } from "../../data/data";
+import { BACKENDADDRESS } from "../../data/dummy";
 import { User } from "../../types";
 
 const URL = 'https://assets.nflxext.com/ffe/siteui/vlv3/3a073c5f-0160-4d85-9a42-6f59aa4b64b9/e31faf5b-2516-4d36-82f4-987d45e3d835/AO-en-20220718-popsignuptwoweeks-perspective_alpha_website_large.jpg';
@@ -68,7 +68,8 @@ const Login = () => {
                 id: parseInt(ret.data.ID_FUNCIONARIO),
                 name: ret.data.NOME,
                 email: ret.data.EMAIL,
-                password: ret.data.SENHA
+                password: ret.data.SENHA,
+                nivel: ret.data.NIVEL
             };
 
             console.log(userAuth);

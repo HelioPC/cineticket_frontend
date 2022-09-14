@@ -1,6 +1,7 @@
 import { TextField } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { BACKENDADDRESS } from "../../data/dummy";
 import { LugarType } from "../../types";
 import { AlertError, AlertSuccess } from "../Alerts";
 
@@ -40,7 +41,7 @@ const SelectPlace = (prop: Props) => {
         axios({
             method: 'POST',
             data: data,
-            url: 'http://192.168.43.35/cineticket/reservas/store',
+            url: `${BACKENDADDRESS}cineticket/reservas/store`,
             headers: { "Content-Type": "multipart/form-data" },
         })
         .then(function (response) {
