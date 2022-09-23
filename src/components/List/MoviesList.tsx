@@ -13,7 +13,7 @@ import {
     TablePagination,
     TableRow,
     Tooltip,
-    FormControl, InputLabel, MenuItem, Select, TextareaAutosize, TextField
+    FormControl, InputLabel, MenuItem, Select, TextareaAutosize, TextField, FormControlLabel, FormLabel, Radio, RadioGroup
 } from '@mui/material';
 import { BsTrashFill, BsPersonCircle } from 'react-icons/bs';
 import { FaEdit } from 'react-icons/fa';
@@ -24,24 +24,108 @@ import { Loading } from '../Utils';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Modal from '../Modal';
 import axios from "axios";
-import { AlertSuccess } from '../Alerts/';
+import { AlertError, AlertSuccess } from '../Alerts/';
 import { BACKENDADDRESS, GENRES } from '../../data/dummy';
 
-const EditMovie = ({ id, title, description, release_date, poster_path, genreId }: EditMovieProps) => {
-	const [open, setOpen] = useState(false);
-	const [titleValue, setTitleValue] = useState(title);
-	const [descriptionValue, setDescriptionValue] = useState(description);
-	const [release_dateValue, setRelease_dateValue] = useState(release_date);
-	const [poster_pathValue, setPoster_pathValue] = useState(poster_path);
-	const [genreIdValue, setGenreIdValue] = useState(genreId);
+const EditMovie = ({ TITULO, DESCRICAO, DURACAO, ANO, CAPA_URL, CLASSIFICACAO, ID_FILME, setOpen }: EditMovieProps) => {
+	const [title, setTitle] = useState(TITULO);
+	const [description, setDescription] = useState(DESCRICAO);
+	const [year, setYear] = useState(ANO);
+	const [image, setImage] = useState(CAPA_URL);
+	const [genre, setGenre] = useState('28');
+	const [duration, setDuration] = useState(DURACAO);
+	const [selectOption, setSelectOption] = useState(CLASSIFICACAO);
+	const options = [
+        { id: '1', title: '7' },
+        { id: '2', title: '12' },
+        { id: '3', title: '14' },
+        { id: '4', title: '16' },
+        { id: '5', title: '18' }
+    ];
 
-	const handleSubmit = () => {}
+	const handleSubmit = () => {
+		// Check if all fields aren't filled
+        if (title === '' || image === '' || description === '' || year === '' || genre === '' || selectOption === '' || duration === '') {
+            AlertError({
+                title: 'Erro',
+                description: 'Preencha todos os campos para continuar'
+            });
+			setOpen(false);
+            return;
+        }
+
+        // Check if the year is valid
+        if (year.length !== 4) {
+            AlertError({
+                title: 'Erro',
+                description: 'Ano inválido'
+            });
+			setOpen(false);
+            return;
+        }
+
+		console.log( title, description, year, image, GENRES[genre], selectOption );
+
+        const data = new FormData();
+        data.append('titulo', title);
+        data.append('ano', year);
+		data.append('duracao', duration);
+        data.append('descricao', description);
+        data.append('genero', GENRES[genre]);
+        data.append('capa', image);
+        data.append('classificacao', selectOption);
+    
+        console.log(data.values());
+    
+        axios({
+            method: 'POST',
+            data: data,
+            url: `${BACKENDADDRESS}cineticket/filmes/${ID_FILME}/update`,
+            headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then(function (response) {
+			console.log(response);
+            //handle success
+            if(response.data.status === 'sucesso') {
+				AlertSuccess({
+					title: 'Success',
+					description: `Filme ${TITULO} atualizado com sucesso`,
+					confirm: () => window.location.reload()
+				});
+			} else {
+				AlertError({
+					title: 'Erro',
+					description: 'Erro na conexão com CineTicket API ⛔️',
+					confirm: () => window.location.reload()
+				});
+			}
+          })
+          .catch(function (response) {
+            //handle error
+			AlertError({
+				title: 'Erro',
+				description: 'Erro inesperado 😥'
+			});
+            console.log(response);
+        });
+        setOpen(false);
+	}
+
+	const handleYear = (e: any) => {
+        const newValue = Math.min(Math.max(e.target.value, 1960), 2022)
+        setYear(previousValue => newValue+'');
+    }
+	
+	const handleDuration = (e: any) => {
+        const newValue = Math.min(Math.max(e.target.value, 65), 280);
+        setDuration(previousValue => newValue+'');
+    }
 
 	return (
 		<div className='flex flex-col gap-5'>
 			<div className='w-full flex items-center'>
 				<img
-					src={`https://image.tmdb.org/t/p/w300${poster_path}`}
+					src={`https://image.tmdb.org/t/p/w300${image}`}
 					alt={title} className='w-10 h-10 rounded-full mr-2'
 				/>
 				<p className='font-bold'>{title}</p>
@@ -49,41 +133,66 @@ const EditMovie = ({ id, title, description, release_date, poster_path, genreId 
 
 			<TextField
 				label='Título'
-				value={titleValue}
-				onChange={(event) => setTitleValue(event.target.value)}
 				className='mt-2'
+				value={title}
+				onChange={(e) => setTitle(e.target.value)}
 			/>
+
+			<TextField
+                name="duration"
+                label="Duração (em minutos)"
+                className='my-2 w-full'
+                type='number'
+                value={duration}
+                onChange={handleDuration}
+            />
 			
 			<TextareaAutosize
 				placeholder='Descrição'
-				value={descriptionValue}
-				onChange={(event) => setDescriptionValue(event.target.value)}
 				className='mt-2'
 				maxRows={5}
+				value={description}
+				onChange={(e) => setDescription(e.target.value)}
 			/>
 			
 			<TextField
 				label='Lançamento'
-				value={release_dateValue}
-				onChange={(event) => setRelease_dateValue(event.target.value)}
 				className='mt-2'
+				value={year}
+				onChange={(e) => handleYear(e)}
 			/>
 
 			<TextField
 				label='Poster'
-				value={poster_pathValue}
-				onChange={(event) => setPoster_pathValue(event.target.value)}
 				className='mt-2'
+				value={image}
+				onChange={(e) => setImage(e.target.value)}
 			/>
+
+			<FormControl variant="outlined">
+				<InputLabel>Classificação</InputLabel>
+				<Select
+					label='Department'
+					name='departmentId'
+					value={selectOption}
+					onChange={(e) => setSelectOption(e.target.value)}
+				>
+					{
+						options.map(
+							item => (<MenuItem key={item.id} value={item.title}>{item.title}</MenuItem>)
+						)
+					}
+				</Select>
+			</FormControl>
 			
 			<FormControl className='mt-2' variant='outlined'>
 				<InputLabel id='demo-simple-select-outlined-label'>Gênero</InputLabel>
 				<Select
 					labelId='demo-simple-select-outlined-label'
 					id='demo-simple-select-outlined'
-					value={genreIdValue.toString()}
-					onChange={(event: SelectChangeEvent<string>) => setGenreIdValue(parseInt(event.target.value))}
 					label='Gênero'
+					value={genre}
+					onChange={(e) => setGenre(e.target.value)}
 				>
 					{Object.keys(GENRES).map((key) => (
 						<MenuItem key={key} value={key}>{GENRES[key]}</MenuItem>
@@ -108,32 +217,20 @@ export const MoviesList = () => {
 	const [selectedMoviesIds, setSelectedMoviesIds] = useState<number[]>([]);
 	const [limit, setLimit] = useState(10);
 	const [page, setPage] = useState(0);
-	const [movie, setMovie] = useState<EditMovieProps>();
+	const [movie, setMovie] = useState<MovieProps>();
 	const [backendMovies, setBackendMovies] = useState<MovieProps[]>([]);
 	const [open, setOpen] = useState(false);
 
 	useEffect(() => {
 		const getMovies = async () => {
-
 			if(backendMovies.length !== 0) return;
-
+			
 			const req = await fetch(`${BACKENDADDRESS}cineticket/filmes`);
 			const json = await req.json();
 
 			json.map((item: MovieProps) => {
-			backendMovies.push(
-				{
-				ID_FILME: item.ID_FILME,
-				ANO: item.ANO,
-				TITULO: item.TITULO,
-				DESCRICAO: item.DESCRICAO,
-				GENERO: item.GENERO,
-				CLASSIFICACAO: item.CLASSIFICACAO,
-				CAPA_URL: item.CAPA_URL
-				}
-			)
-			}
-			);
+				setBackendMovies((movies => [...movies, item]));
+			});
 		}
 
 		getMovies();
@@ -181,10 +278,12 @@ export const MoviesList = () => {
 		setPage(0);
 	};
 
-	const handleDisplayEditMovie = ({ id, title, description, release_date, poster_path, genreId }: EditMovieProps) => {
-		setMovie({ id, title, description, release_date, poster_path, genreId });
+	const handleDisplayEditMovie = ({ ID_FILME, ANO, TITULO, DESCRICAO, GENERO, CLASSIFICACAO, CAPA_URL, DURACAO }: MovieProps) => {
+		setMovie({ ID_FILME, ANO, TITULO, DESCRICAO, GENERO, CLASSIFICACAO, CAPA_URL, DURACAO });
 		setOpen(true);
 	}
+
+	if(backendMovies.length === 0) return <Loading text="Connecting to CineTicket API..." />;
 
 	return (
 		<Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -203,20 +302,23 @@ export const MoviesList = () => {
 								onChange={handleSelectAll}
 								/>
 							</TableCell>
-							<TableCell style={{ minWidth: 170 }}>
-								Título
+							<TableCell>
+								<p className="font-bold">Título</p>
 							</TableCell>
 							<TableCell>
-								Gênero
+								<p className="font-bold">Duração</p>
 							</TableCell>
 							<TableCell>
-								Classificação
+								<p className="font-bold">Gênero</p>
 							</TableCell>
 							<TableCell>
-								Lançamento
+								<p className="font-bold">Classificação</p>
 							</TableCell>
 							<TableCell>
-								Actions
+								<p className="font-bold">Lançamento</p>
+							</TableCell>
+							<TableCell>
+								<p className="font-bold">Actions</p>
 							</TableCell>
 						</TableRow>
 					</TableHead>
@@ -239,19 +341,22 @@ export const MoviesList = () => {
 							<TableCell>
 								<Box
 									sx={{
-									alignItems: 'center',
-									display: 'flex'
+										alignItems: 'center',
+										display: 'flex'
 									}}
 								>
 									{movie.CAPA_URL && (
-									movie.CAPA_URL.includes('http') ? (
-										<Avatar src={movie.CAPA_URL} alt={movie.TITULO} sx={{ mr: '2' }} />
-									) : (
-										<BsPersonCircle size={24} className='mr-2' />
-									)
+										movie.CAPA_URL.includes('http') ? (
+											<Avatar src={movie.CAPA_URL} alt={movie.TITULO} sx={{ mr: '20px' }} />
+										) : (
+											<BsPersonCircle size={24} className='mr-2' />
+										)
 									)}
 									<p className='sm:block hidden'>{movie.TITULO}</p>
 								</Box>
+							</TableCell>
+							<TableCell>
+								{movie.DURACAO} min
 							</TableCell>
 							<TableCell>
 								{movie.GENERO}
@@ -264,15 +369,10 @@ export const MoviesList = () => {
 							</TableCell>
 							<TableCell>
 								<div className='flex'>
-									<Tooltip title='Delete' arrow placement='top'>
-										<button className='cursor-pointer'>
-											<BsTrashFill className='text-[#A00]' size={18} />
-										</button>
-									</Tooltip>
 									<Tooltip title='Edit' arrow placement='top'>
 										<button
 											className='cursor-pointer ml-5'
-											onClick={() => handleDisplayEditMovie({ id: parseInt(movie.ID_FILME), title: movie.TITULO, description: movie.DESCRICAO, release_date: movie.ANO, poster_path: movie.CAPA_URL, genreId: parseInt(movie.GENERO) })}
+											onClick={() => handleDisplayEditMovie({ ...movie })}
 										>
 											<FaEdit className='text-[#00A]' size={18} />
 										</button>
@@ -304,7 +404,12 @@ export const MoviesList = () => {
 				(
 					<div>Falhou</div>
 				) : (
-					<EditMovie {...movie} />
+					<EditMovie
+						TITULO={movie.TITULO} ANO={movie.ANO} CAPA_URL={movie.CAPA_URL}
+						CLASSIFICACAO={movie.CLASSIFICACAO} setOpen={setOpen}
+						ID_FILME={movie.ID_FILME} DESCRICAO={movie.DESCRICAO}
+						GENERO={movie.GENERO} DURACAO={movie.DURACAO}
+					/>
 				)
 				}
 			</Modal>

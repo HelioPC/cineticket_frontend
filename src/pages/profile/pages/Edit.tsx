@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { AlertError, AlertSuccess } from "../../../components/Alerts";
 import Modal from "../../../components/Modal";
-import { useUser } from "../../../contexts/UserContext";
+import { UserActions, useUser } from "../../../contexts/UserContext";
 import { BACKENDADDRESS } from "../../../data/dummy";
 
 type Props = {
@@ -11,19 +11,19 @@ type Props = {
 }
 
 const ChangeData = ({ setOpen }: Props) => {
-    const { user } = useUser();
+    const { user, dispatch } = useUser();
     const [nome, setNome] = useState(user.name);
     const [email, setEmail] = useState(user.email);
 
     const handleSubmit = () => {
-        if(nome === user.name && email === user.email) {
+        if (nome === user.name && email === user.email) {
             AlertError({
                 title: "Error",
                 description: "Sem dados alterados"
             });
             setOpen(false);
             return;
-        } else if(nome === '' || email === '') {
+        } else if (nome === '' || email === '') {
             AlertError({
                 title: "Error",
                 description: `Faltou preencher os seguintes campos: ${nome === '' ? 'nome' : ''} ${email === '' ? ' e e-mail' : ''}`
@@ -34,7 +34,7 @@ const ChangeData = ({ setOpen }: Props) => {
             const data = new FormData();
             data.append('nome', nome);
             data.append('email', email);
-            data.append("id", user.id+'');
+            data.append("id", user.id + '');
 
             axios({
                 method: 'POST',
@@ -42,22 +42,44 @@ const ChangeData = ({ setOpen }: Props) => {
                 url: `${BACKENDADDRESS}cineticket/perfil/update`,
                 headers: { "Content-Type": "multipart/form-data" },
             })
-            .then(function (response) {
-                //handle success
-                AlertSuccess({
-                    title: 'Success',
-                    description: `Utilizador '${nome}' cadastrado com sucesso`,
-                    confirm: () => {window.location.reload();}
+                .then(function (response) {
+                    //handle success
+                    if (response.data.status === 'sucesso') {
+                        user.name = nome;
+                        user.email = email;
+
+                        dispatch({
+                            type: UserActions.setUser,
+                            payload: user
+                        });
+
+                        const profile = JSON.parse(localStorage.getItem('userCineticketUAN2022') ?? '');
+
+                        profile['name'] = nome;
+                        profile['email'] = email;
+                        localStorage.setItem('userCineticketUAN2022', JSON.stringify(profile));
+
+                        AlertSuccess({
+                            title: 'Success',
+                            description: `Dados do utilizador '${nome}' alterado com sucesso`,
+                            confirm: () => { window.location.reload(); }
+                        });
+                    } else {
+                        AlertError({
+                            title: "Error",
+                            description: "Ocorreu um erro inesperado! 😭",
+                            confirm: () => window.location.reload()
+                        });
+                    }
+                    console.log(response);
+                })
+                .catch(function (response) {
+                    AlertError({
+                        title: "Error",
+                        description: "Ocorreu um erro inesperado! 😭"
+                    });
+                    console.log(response);
                 });
-                console.log(response);
-            })
-            .catch(function (response) {
-                AlertError({
-                    title: "Error",
-                    description: "Ocorreu um erro inesperado! 😭"
-                });
-                console.log(response);
-            });
             setOpen(false);
         }
     }
@@ -94,7 +116,7 @@ const ChangeData = ({ setOpen }: Props) => {
 }
 
 const ChangePassword = ({ setOpen }: Props) => {
-    const { user } = useUser();
+    const { user, dispatch } = useUser();
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [differentPassword, setDifferentPassword] = useState(false);
@@ -102,20 +124,20 @@ const ChangePassword = ({ setOpen }: Props) => {
     // perfil/change_password
 
     const handleSubmit = () => {
-        if(oldPassword !== user.password) {
+        if (oldPassword !== user.password) {
             AlertError({
                 title: "Error",
                 description: 'Forneça a sua senha'
             });
             setOpen(false);
             return;
-        } else if(oldPassword === newPassword) {
+        } else if (oldPassword === newPassword) {
             setDifferentPassword(true);
             return;
         } else {
             const data = new FormData();
             data.append('new_password', newPassword);
-            data.append("id", user.id+'');
+            data.append("id", user.id + '');
 
             axios({
                 method: 'POST',
@@ -123,22 +145,43 @@ const ChangePassword = ({ setOpen }: Props) => {
                 url: `${BACKENDADDRESS}cineticket/perfil/change_password`,
                 headers: { "Content-Type": "multipart/form-data" },
             })
-            .then(function (response) {
-                //handle success
-                AlertSuccess({
-                    title: 'Success',
-                    description: `Senha de '${user.name}' alterada com sucesso`,
-                    confirm: () => {window.location.reload();}
+                .then(function (response) {
+                    //handle success
+
+                    console.log(response.data.status);
+                    if (response.data.status === 'sucesso') {
+                        user.password = newPassword;
+
+                        dispatch({
+                            type: UserActions.setUser,
+                            payload: user
+                        });
+
+                        const profile = JSON.parse(localStorage.getItem('userCineticketUAN2022') ?? '');
+
+                        profile['password'] = newPassword;
+                        localStorage.setItem('userCineticketUAN2022', JSON.stringify(profile));
+
+                        AlertSuccess({
+                            title: 'Success',
+                            description: `Senha de '${user.name}' alterada com sucesso`,
+                            confirm: () => window.location.reload()
+                        });
+                    } else {
+                        AlertError({
+                            title: "Error",
+                            description: "Ocorreu um erro inesperado! 😭",
+                            confirm: () => window.location.reload()
+                        });
+                    }
+                })
+                .catch(function (response) {
+                    AlertError({
+                        title: "Error",
+                        description: "Ocorreu um erro inesperado! 😭"
+                    });
+                    console.log(response);
                 });
-                console.log(response);
-            })
-            .catch(function (response) {
-                AlertError({
-                    title: "Error",
-                    description: "Ocorreu um erro inesperado! 😭"
-                });
-                console.log(response);
-            });
             setOpen(false);
         }
     }

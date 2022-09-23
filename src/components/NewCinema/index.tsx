@@ -38,7 +38,6 @@ const NewCinema = ({ cidades, ruas, setOpen, setCidade }: NewCinemaProps) => {
     const [cidade, setCidade1] = useState('1');
     const [rua, setRua] = useState('');
     const [ruasFiltered, setRuasFiltered] = useState<RuaProps[]>([]);
-    const [ruas1, setRuas1] = useState<RuaProps[]>([]);
     const [name, setName] = useState('');
 
     // Submit form
@@ -64,14 +63,28 @@ const NewCinema = ({ cidades, ruas, setOpen, setCidade }: NewCinemaProps) => {
         })
         .then(function (response) {
             //handle success
-            AlertSuccess({
-                title: 'Success',
-                description: 'Report sent successfully!'
-            });
+            if(response.data.status === 'sucesso') {
+                AlertSuccess({
+                    title: 'Successo',
+                    description: `Cinema ${name} criado com sucesso`,
+                    confirm: () => window.location.reload()
+                });
+            } else {
+                AlertError({
+                    title: 'Erro',
+                    description: 'Falha na requisição com Cineticket API',
+                    confirm: () => window.location.reload()
+                });
+            }
             console.log(response);
           })
           .catch(function (response) {
             //handle error
+            AlertError({
+                title: 'Erro',
+                description: 'Erro inesperado 🥲',
+                confirm: () => window.location.reload()
+            });
             console.log(response);
           });
         setOpen(false);
@@ -98,8 +111,16 @@ const NewCinema = ({ cidades, ruas, setOpen, setCidade }: NewCinemaProps) => {
         }
     } , [cidade]);
 
+    useEffect(() => {
+        if(ruasFiltered.length !== 0) {
+            setRua(ruasFiltered[0].ID_RUA);
+        }
+    }, [ruasFiltered]);
+
     //if(cidades.length < 1) return <Loading text='Connecting' />;
     if(cidades.length < 1) return (<Loading text='Carregando cinemas' />);
+    
+    useEffect(() => { console.log(rua) }, [rua]);
 
     return (
         <div className='flex flex-col gap-6'>
@@ -119,8 +140,8 @@ const NewCinema = ({ cidades, ruas, setOpen, setCidade }: NewCinemaProps) => {
 
             {ruasFiltered.length > 0 && (
                 <select name="rua" onChange={(e) => handleSelectRua(e)} className='rounded-md'>
-                    {ruasFiltered.map(rua => (
-                        <option key={rua.ID_RUA} value={rua.ID_RUA}>{rua.NOME}</option>
+                    {ruasFiltered.map((rua, index) => (
+                        <option key={index} value={rua.ID_RUA}>{rua.NOME}</option>
                     ))}
                 </select>
             )}

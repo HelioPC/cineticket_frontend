@@ -1,7 +1,8 @@
 import {
-    TextField, FormControl, FormLabel, RadioGroup as MuiRadioGroup,
-    Radio, Select, MenuItem, InputLabel, TextareaAutosize
+    RadioGroup as MuiRadioGroup
 } from '@mui/material';
+import Select, { StylesConfig, SingleValue } from "react-select";
+
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -10,6 +11,7 @@ import { strToDate, addZeroToDate, formatDate } from '../../helpers/date';
 import { CinemaProps, MovieProps } from '../../types';
 import { AlertError, AlertSuccess } from '../Alerts';
 import { Loading } from '../Utils';
+import { useUser } from '../../contexts/UserContext';
 
 type SalaType = {
     ID_SALA: string;
@@ -22,34 +24,79 @@ type Props = {
     setOpen: (open: boolean) => void;
 }
 
+const dot = (color = 'transparent') => ({
+    alignItems: 'center',
+    display: 'flex',
+
+    ':before': {
+        backgroundColor: color,
+        borderRadius: 10,
+        content: '" "',
+        display: 'block',
+        marginRight: 8,
+        height: 10,
+        width: 10,
+    },
+});
+
+const colourStyles: StylesConfig<MovieProps> = {
+    control: (styles) => ({ ...styles, backgroundColor: 'white' }),
+    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+        return {
+            ...styles,
+            backgroundColor: isDisabled
+                ? undefined
+                : isSelected
+                    ? "#780b11"
+                    : isFocused
+                        ? "rgba(70,0,0,.5)"
+                        : undefined,
+            color: isDisabled
+                ? '#ccc'
+                : isSelected
+                    ? "white"
+                    : isFocused
+                        ? "white"
+                        : "black",
+            cursor: isDisabled ? 'not-allowed' : 'default',
+
+            ':active': {
+                ...styles[':active'],
+                backgroundColor: !isDisabled
+                    ? isSelected
+                        ? ""
+                        : ""
+                    : undefined,
+            },
+        };
+    },
+    input: (styles) => ({ ...styles, ...dot() }),
+    placeholder: (styles) => ({ ...styles, ...dot('#ccc') }),
+};
+
 const NewSessions = ({ setOpen }: Props) => {
+    const { user } = useUser();
     const [cinemas, setCinemas] = useState<CinemaProps[]>([]);
     const [backendMovies, setBackendMovies] = useState<MovieProps[]>([]);
     const [salas, setSalas] = useState<SalaType[]>([]);
-    const [selectedCinema, setSelectedCinema] = useState('');
-    const [selectedMovie, setSelectedMovie] = useState('');
+    const [selectedCinema, setSelectedCinema] = useState(user.id_cinema);
+    const [selectedMovie, setSelectedMovie] = useState<SingleValue<MovieProps>>();
     const [selectedSala, setSelectedSala] = useState('');
-    const [fetchedMovie, setFetchedMovie] = useState(false);
-    const [fetchedSalas, setFetchedSalas] = useState(false);
-    const [fetchedCinemas, setFetchedCinemas] = useState(false);
+    const [allFields, setAllFields] = useState(false);
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
-    const [price, setPrice] = useState('');
+    const [price, setPrice] = useState('1000');
     const tomorrow = (new Date()).getDate() + 1;
     const month = (new Date()).getMonth() + 1;
     const year = (new Date()).getFullYear();
     
     const handleSubmit = () => {
-        if(selectedCinema === '' || selectedMovie === '' || selectedSala === '' || date === '' || time === '' || price === '') {
-            AlertError({
-                title: 'Error',
-                description: 'Please fill all fields!'
-            });
+        if(selectedCinema === '' || selectedMovie === undefined || selectedSala === '' || date === '' || time === '' || price === '') {
             return;
         }
 
         const data = new FormData();
-        data.append('id_filme', selectedMovie);
+        selectedMovie !== null && data.append('id_filme', selectedMovie.ID_FILME);
         data.append('id_sala', selectedSala);
         data.append('data', date);
         data.append('hora', time);
@@ -63,16 +110,39 @@ const NewSessions = ({ setOpen }: Props) => {
         })
         .then(function (response) {
             //handle success
-            AlertSuccess({
-                title: 'Success',
-                description: 'Report sent successfully!'
-            });
+            if(response.data.status === 'sucesso') {
+                AlertSuccess({
+                    title: 'Successo',
+                    description: `Sessão criada com sucesso ✅`,
+                    confirm: () => window.location.reload()
+                });
+            } else {
+                if(response.data.message === 'timeout') {
+                    AlertError({
+                        title: 'Bloqueio',
+                        description: 'Já existe uma sessão marcada dentro deste horário ⛔️',
+                        confirm: () => window.location.reload()
+                    });
+                } else {
+                    AlertError({
+                        title: 'Erro',
+                        description: 'Falha na requisição com Cineticket API ⛔️',
+                        confirm: () => window.location.reload()
+                    });
+                }
+            }
             console.log(response);
           })
           .catch(function (response) {
             //handle error
+            AlertError({
+                title: 'Erro',
+                description: 'Erro inesperado 🥲',
+                confirm: () => window.location.reload()
+            });
             console.log(response);
-        });
+          });
+        setOpen(false);
     }
 
     useEffect(() => {
@@ -86,19 +156,8 @@ const NewSessions = ({ setOpen }: Props) => {
     
             if(backendMovies.length === 0) {
                 json.map((item: MovieProps) => {
-                    backendMovies.push(
-                        {
-                            ID_FILME: item.ID_FILME,
-                            ANO: item.ANO,
-                            TITULO: item.TITULO,
-                            DESCRICAO: item.DESCRICAO,
-                            GENERO: item.GENERO,
-                            CLASSIFICACAO: item.CLASSIFICACAO,
-                            CAPA_URL: item.CAPA_URL
-                        }
-                    )
+                    setBackendMovies((movies => [...movies, item]));
                 });
-                setFetchedMovie(true);
             }
         }
 
@@ -108,15 +167,8 @@ const NewSessions = ({ setOpen }: Props) => {
 
 			if(cinemas.length === 0) {
                 json.map((item: CinemaProps) => {
-                    cinemas.push(
-                        {
-                            ID_CINEMA: item.ID_CINEMA,
-                            NOME: item.NOME,
-                            LOCALIZACAO: item.LOCALIZACAO
-                        }
-                    )
+                    setCinemas((cinemas => [...cinemas, item]));
                 });
-                setFetchedCinemas(true);
             }
 		}
 
@@ -131,23 +183,22 @@ const NewSessions = ({ setOpen }: Props) => {
             const req = await fetch(`${BACKENDADDRESS}cineticket/cinemas/${selectedCinema}/salas`);
 			const json = await req.json();
 
-            if(salas.length === 0) {
-                json.map((item: SalaType) => {
-                    salas.push(
-                        {
-                            ID_SALA: item.ID_SALA,
-                            ID_CINEMA: item.ID_CINEMA,
-                            NUMERO: item.NUMERO,
-                            CAPACIDADE: item.CAPACIDADE
-                        }
-                    )
-                });
-                setFetchedSalas(true);
-            }
+            setSalas([]);
+            json.map((item: SalaType) => {
+                setSalas((salas) => [...salas, item]);
+            });
         }
 
         getSalas();
     }, [selectedCinema]);
+
+    useEffect(() => {
+        if(!(selectedCinema === '' || selectedMovie === undefined || selectedSala === '' || date === '' || time === '' || price === '')) {
+            setAllFields(true);
+        } else {
+            setAllFields(false);
+        }
+    }, [selectedCinema, selectedMovie, selectedSala, price, time, date]);
 
     const handleDateChange = (newDate: string) => {
         setDate(formatDate(strToDate(newDate)));
@@ -155,17 +206,18 @@ const NewSessions = ({ setOpen }: Props) => {
 
     return (
         <div className='flex flex-col gap-5'>
-            <select
-                name="filmes"
+            <Select
+                placeholder="Selecione um filme"
+                options={backendMovies}
+                getOptionLabel={(movie: MovieProps) => movie.TITULO}
+                getOptionValue={(movie: MovieProps) => movie.ID_FILME}
                 value={selectedMovie}
-                onChange={(e) => setSelectedMovie(e.target.value)}
-                className='rounded-md'
-            >
-                <option value=''>Selecione um filme</option>
-                {backendMovies.map((item: MovieProps, index) => (
-                    <option key={index} value={item.ID_FILME}>{item.TITULO}</option>
-                ))}
-            </select>
+                onChange={(e) => setSelectedMovie(e)}
+                openMenuOnFocus={true}
+                isMulti={false}
+                styles={colourStyles}
+                className="w-full"
+            />
 
             <input
                 type='date' className='rounded-md'
@@ -181,21 +233,27 @@ const NewSessions = ({ setOpen }: Props) => {
 
             <input
                 type='number' className='rounded-md'
+                min={1000}
+                max={10000}
                 placeholder='Introduza o preço' value={price}
                 onChange={(e) => setPrice(e.target.value)}
             />
             
-            <select
-                name="cinemas"
-                value={selectedCinema}
-                onChange={(e) => setSelectedCinema(e.target.value)}
-                className='rounded-md'
-            >
-                <option value=''>Selecione um cinema</option>
-                {cinemas.map((item: CinemaProps, index) => (
-                    <option key={index} value={item.ID_CINEMA}>{item.NOME}</option>
-                ))}
-            </select>
+            {user.nivel === 'admin' &&
+                (
+                    <select
+                        name="cinemas"
+                        value={selectedCinema}
+                        onChange={(e) => setSelectedCinema(e.target.value)}
+                        className='rounded-md'
+                    >
+                        <option value=''>Selecione um cinema</option>
+                        {cinemas.map((item: CinemaProps, index) => (
+                            <option key={index} value={item.ID_CINEMA}>{item.NOME}</option>
+                        ))}
+                    </select>
+                )
+            }
             
             {selectedCinema !== '' &&
                 (
@@ -214,7 +272,14 @@ const NewSessions = ({ setOpen }: Props) => {
             }
 
             <button
-                className='px-2 py-1 w-full bg-[#B81D24] hover:bg-[#980D14] hover:scale-105 duration-500 text-white rounded-md'
+                className={`
+                    px-2 py-1 w-full duration-500 text-white rounded-md
+                    ${
+                        allFields ?
+                        'bg-[#B81D24] hover:bg-[#980D14] hover:scale-105':
+                        'bg-[#AAA] cursor-not-allowed'
+                    }
+                `}
                 type='submit'
                 onClick={handleSubmit}
             >

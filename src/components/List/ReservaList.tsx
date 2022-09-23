@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import {
-    Checkbox,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TablePagination,
-    TableRow,
-    Tooltip
+	Checkbox,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TablePagination,
+	TableRow,
+	Tooltip
 } from '@mui/material';
 import { AiFillCheckCircle, AiFillCloseCircle } from 'react-icons/ai';
 import { BsTrashFill } from 'react-icons/bs';
@@ -20,6 +20,7 @@ import axios from "axios";
 import { AlertSuccess } from '../Alerts/';
 import { BACKENDADDRESS } from '../../data/dummy';
 import { useUser } from '../../contexts/UserContext';
+import { Loading } from '../Utils';
 /*
 /cineticket/reservas/eliminar
 /cineticket/reservas/confirmar
@@ -59,7 +60,7 @@ const Estado = ({ estado }: ReservaState) => {
 }
 
 const ReservaList = () => {
-    const [selectedReservasIds, setSelectedReservasIds] = useState<number[]>([]);
+	const [selectedReservasIds, setSelectedReservasIds] = useState<number[]>([]);
 	const [limit, setLimit] = useState(10);
 	const [page, setPage] = useState(0);
 	const [reservas, setReservas] = useState<ReservaType[]>([]);
@@ -68,37 +69,30 @@ const ReservaList = () => {
 	useEffect(() => {
 		const getReservas = async () => {
 
-			if(reservas.length !== 0) return;
+			if (reservas.length !== 0) return;
 
 			//const req = await fetch('http://192.168.43.35/cineticket/filmes');
 			const req = await fetch(`${BACKENDADDRESS}cineticket/reservas`);
 			const json = await req.json();
 
 			json.map((item: ReservaType) => {
-                reservas.push(
-                    {
-                        ID_RESERVA: item.ID_RESERVA,
-                        CLIENTE: item.CLIENTE,
-                        FILME: item.FILME,
-                        DATA: item.DATA,
-                        LUGARES: item.LUGARES,
-                        CINEMA: item.CINEMA,
-                        SALA: item.SALA,
-                        ESTADO: item.ESTADO
-                    }
-                )
+				if (user.nivel === 'admin') {
+					setReservas((reservas => [...reservas, item]));
+				} else {
+					if (user.id_cinema === item.ID_CINEMA) {
+						setReservas((reservas => [...reservas, item]));
+					}
+				}
 			});
-
-			console.log(reservas);
 		}
 
 		getReservas();
-	} , []);
+	}, []);
 
 	const handleReservaAction = async ({ id, action, id_funcionario }: HandleReservaAction) => {
 		const data = new FormData();
-		
-		if(id_funcionario !== undefined) {
+
+		if (id_funcionario !== undefined) {
 			data.append('id_reserva', id);
 			data.append('id_funcionario', id_funcionario);
 
@@ -112,7 +106,7 @@ const ReservaList = () => {
 				AlertSuccess({
 					title: "Reserva Eliminada",
 					description: `A reserva ${id} foi eliminada com sucesso`,
-					confirm: () => {window.location.reload();}
+					confirm: () => { window.location.reload(); }
 				});
 			}).catch(function (response) {
 				// Handle error
@@ -130,7 +124,7 @@ const ReservaList = () => {
 				AlertSuccess({
 					title: `Reserva ${action === 'confirmar' ? 'confirmada' : 'cancelada'}`,
 					description: `A reserva ${id} foi ${action === 'confirmar' ? 'confirmada' : 'cancelada'} com sucesso`,
-					confirm: () => {window.location.reload();}
+					confirm: () => { window.location.reload(); }
 				});
 			}).catch(function (response) {
 				// Handle error
@@ -164,8 +158,8 @@ const ReservaList = () => {
 			newSelectedMoviesIds = newSelectedMoviesIds.concat(selectedReservasIds.slice(0, -1));
 		} else if (selectedIndex > 0) {
 			newSelectedMoviesIds = newSelectedMoviesIds.concat(
-			selectedReservasIds.slice(0, selectedIndex),
-			selectedReservasIds.slice(selectedIndex + 1)
+				selectedReservasIds.slice(0, selectedIndex),
+				selectedReservasIds.slice(selectedIndex + 1)
 			);
 		}
 
@@ -181,143 +175,133 @@ const ReservaList = () => {
 		setPage(0);
 	};
 
+	if (reservas.length === 0) return <Loading text='Connecting to CineTicket API...' />
+	else console.log(reservas);
+
 	return (
-		<Paper sx={{ width: '100%', overflow: 'hidden' }}>
-			<TableContainer sx={{ maxHeight: 440 }}>
-				<Table stickyHeader aria-label="sticky table">
-					<TableHead>
-						<TableRow className='bg-[#DDD]'>
-							<TableCell padding="checkbox">
-								<Checkbox
-									checked={selectedReservasIds.length === reservas.length}
-									color="primary"
-									indeterminate={
-										selectedReservasIds.length > 0
-										&& selectedReservasIds.length < reservas.length
-									}
-									onChange={handleSelectAll}
-								/>
-							</TableCell>
-							<TableCell>
-								Cliente
-							</TableCell>
-							<TableCell>
-								Filme
-							</TableCell>
-							<TableCell>
-								Data
-							</TableCell>
-                            <TableCell>
-								Sala
-							</TableCell>
-                            <TableCell>
-								Cinema
-							</TableCell>
-                            <TableCell>
-								Estado
-							</TableCell>
-							<TableCell>
-								Actions
-							</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{reservas.slice(page * limit, page * limit + limit)
-						.map((res, index) => (
-							<TableRow
-								hover
-								key={index}
-								selected={selectedReservasIds.indexOf(index) !== -1}
-							>
-								<TableCell>{res.ID_RESERVA}</TableCell>
-								<TableCell>{res.CLIENTE}</TableCell>
-								<TableCell>
-									<div className="w-24">
-										<p>{res.FILME}</p>
-									</div>
-								</TableCell>
-								<TableCell>{res.DATA}</TableCell>
-								<TableCell>{res.SALA}</TableCell>
-								<TableCell>
-									<div className='w-24'>
-										<p>{res.CINEMA}</p>
-									</div>
-								</TableCell>
-								<TableCell>
-									<Estado estado={res.ESTADO} />
-								</TableCell>
-								<TableCell>
-									<div className='flex gap-3'>
-										{
-											res.ESTADO === '0' ?
-											(
-												<>
-													<Tooltip title='Confirmar' arrow placement='top'>
+		reservas.length === 0 ?
+			(
+				<div>Sem Reservas</div>
+			)
+			:
+			(
+				<Paper sx={{ width: '100%', overflow: 'hidden' }}>
+					<TableContainer sx={{ maxHeight: 440 }}>
+						<Table stickyHeader aria-label="sticky table">
+							<TableHead>
+								<TableRow className='bg-[#DDD]'>
+									<TableCell padding="checkbox">
+										<Checkbox
+											checked={selectedReservasIds.length === reservas.length}
+											color="primary"
+											indeterminate={
+												selectedReservasIds.length > 0
+												&& selectedReservasIds.length < reservas.length
+											}
+											onChange={handleSelectAll}
+										/>
+									</TableCell>
+									<TableCell>
+										<p className="font-bold">Cliente</p>
+									</TableCell>
+									<TableCell>
+										<p className="font-bold">Filme</p>
+									</TableCell>
+									<TableCell>
+										<p className="font-bold">Data</p>
+									</TableCell>
+									<TableCell>
+										<p className="font-bold">Sala</p>
+									</TableCell>
+									<TableCell>
+										<p className="font-bold">Cinema</p>
+									</TableCell>
+									<TableCell>
+										<p className="font-bold">Estado</p>
+									</TableCell>
+									<TableCell>
+										<p className="font-bold">Actions</p>
+									</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{reservas.slice(page * limit, page * limit + limit)
+									.map((res, index) => (
+										<TableRow
+											hover
+											key={index}
+											selected={selectedReservasIds.indexOf(index) !== -1}
+										>
+											<TableCell>{res.ID_RESERVA}</TableCell>
+											<TableCell>{res.CLIENTE}</TableCell>
+											<TableCell>
+												<div className="w-24">
+													<p>{res.FILME}</p>
+												</div>
+											</TableCell>
+											<TableCell>{res.DATA}</TableCell>
+											<TableCell>{res.SALA}</TableCell>
+											<TableCell>
+												<div className='w-24'>
+													<p>{res.CINEMA}</p>
+												</div>
+											</TableCell>
+											<TableCell>
+												<Estado estado={res.ESTADO} />
+											</TableCell>
+											<TableCell>
+												<div className='flex gap-3'>
+													{
+														res.ESTADO === '0' ?
+															(
+																<>
+																	<Tooltip title='Confirmar' arrow placement='top'>
+																		<button
+																			className='cursor-pointer'
+																			onClick={() => handleReservaAction({ id: res.ID_RESERVA, action: 'confirmar' })}
+																		>
+																			<AiFillCheckCircle className='text-green-600 hover:text-green-800' size={20} />
+																		</button>
+																	</Tooltip>
+																	<Tooltip title='Cancelar' arrow placement='top'>
+																		<button
+																			className='cursor-pointer'
+																			onClick={() => handleReservaAction({ id: res.ID_RESERVA, action: 'cancelar' })}
+																		>
+																			<AiFillCloseCircle className='text-orange-400 hover:text-orange-600' size={20} />
+																		</button>
+																	</Tooltip>
+																</>
+															) : null
+													}
+													<Tooltip title='Eliminar' arrow placement='top'>
 														<button
 															className='cursor-pointer'
-															onClick={() => handleReservaAction({ id: res.ID_RESERVA, action: 'confirmar' })}
+															onClick={() => handleReservaAction({ id: res.ID_RESERVA, action: 'eliminar', id_funcionario: user.id.toString() })}
 														>
-															<AiFillCheckCircle className='text-green-600 hover:text-green-800' size={24} />
+															<BsTrashFill className='text-red-600 hover:text-red-800' size={20} />
 														</button>
 													</Tooltip>
-													<Tooltip title='Cancelar' arrow placement='top'>
-														<button
-															className='cursor-pointer'
-															onClick={() => handleReservaAction({ id: res.ID_RESERVA, action: 'cancelar' })}
-														>
-															<AiFillCloseCircle className='text-orange-400 hover:text-orange-600' size={24} />
-														</button>
-													</Tooltip>
-												</>
-											) : null
-										}
-										<Tooltip title='Eliminar' arrow placement='top'>
-											<button
-												className='cursor-pointer'
-												onClick={() => handleReservaAction({ id: res.ID_RESERVA, action: 'eliminar', id_funcionario: user.id.toString() })}
-											>
-												<BsTrashFill className='text-red-600 hover:text-red-800' size={24} />
-											</button>
-										</Tooltip>
-									</div>
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
-			
-			<TablePagination
-				component="div"
-				count={reservas.length}
-				onPageChange={handleChangePage}
-				onRowsPerPageChange={handleChangeRowsPerPage}
-				page={page}
-				rowsPerPage={limit}
-				rowsPerPageOptions={[1, 5, 10]}
-			/>
-		</Paper>
+												</div>
+											</TableCell>
+										</TableRow>
+									))}
+							</TableBody>
+						</Table>
+					</TableContainer>
+
+					<TablePagination
+						component="div"
+						count={reservas.length}
+						onPageChange={handleChangePage}
+						onRowsPerPageChange={handleChangeRowsPerPage}
+						page={page}
+						rowsPerPage={limit}
+						rowsPerPageOptions={[1, 5, 10]}
+					/>
+				</Paper>
+			)
 	);
 }
 
 export default ReservaList
-
-/*
-<TableCell>
-									<div className='flex'>
-										<Tooltip title='Delete' arrow placement='top'>
-											<button className='cursor-pointer'>
-												<BsTrashFill className='text-[#A00]' size={18} />
-											</button>
-										</Tooltip>
-										<Tooltip title='Edit' arrow placement='top'>
-											<button
-												className='cursor-pointer ml-5'
-												onClick={() => {}}
-											>
-												<FaEdit className='text-[#00A]' size={18} />
-											</button>
-										</Tooltip>
-									</div>
-								</TableCell>
-*/

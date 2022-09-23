@@ -15,7 +15,7 @@ const SelectPlace = (prop: Props) => {
     console.log(prop.lugares);
     const [selectedPlaces, setSelectedPlaces] = useState<string[]>([]);
     const [name, setName] = useState<string>("");
-    const [phone, setPhone] = useState<string>("0");
+    const [phone, setPhone] = useState<string>("910000000");
 
     const handleSelectPlace = (place: string, estado: string) => {
         if (estado === "1") return;
@@ -46,16 +46,36 @@ const SelectPlace = (prop: Props) => {
         })
         .then(function (response) {
             //handle success
-            AlertSuccess({
-                title: 'Success',
-                description: 'Report sent successfully!'
+            if(response.data.status === 'sucesso') {
+                AlertSuccess({
+                    title: 'Successo',
+                    description: `Reserva efetuada com sucesso ✅`,
+                    confirm: () => window.location.reload()
+                });
+            } else {
+                AlertError({
+                    title: 'Erro',
+                    description: 'Falha na requisição com Cineticket API ⛔️',
+                    confirm: () => window.location.reload()
+                });
+            }
+            console.log(response);
+          })
+          .catch(function (response) {
+            //handle error
+            AlertError({
+                title: 'Erro',
+                description: 'Erro inesperado 🥲',
+                confirm: () => window.location.reload()
             });
             console.log(response);
-          }).catch(function (response) {
-            //handle error
-            console.log(response);
-        });
+          });
         prop.setOpen(false);
+    }
+
+    const handleTamanho = (e: any) => {
+        const newValue = Math.min(Math.max(e.target.value, 910000000), 999999999)
+        setPhone(previousValue => newValue+'');
     }
     
     return (
@@ -105,7 +125,7 @@ const SelectPlace = (prop: Props) => {
                 className='my-2 w-full'
                 type='number'
                 value={parseInt(phone)}
-                onChange={(e) => setPhone(e.target.value.toString())}
+                onChange={handleTamanho}
             />
 
             {selectedPlaces.length > 0 && phone !== "" && name !== "" ? 

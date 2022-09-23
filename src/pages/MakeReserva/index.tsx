@@ -3,11 +3,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ImTicket } from "react-icons/im";
 
-import api from "../../api";
 import Header from "../../components/Header";
 import { Loading } from "../../components/Utils";
-import { BACKENDADDRESS, GENRES } from "../../data/dummy";
-import { CinemaProps, LugarType, Movie, MovieProps, MyList, SessionType } from "../../types";
+import { BACKENDADDRESS } from "../../data/dummy";
+import { LugarType, MovieProps, SessionType } from "../../types";
 import Modal from "../../components/Modal";
 import SelectPlace from "../../components/SelectPlace";
 
@@ -82,6 +81,10 @@ const MakeReserva = () => {
     useEffect(() => {
         if(lugares.length !== 0) setOpen(true);
     }, [lugares]);
+
+    useEffect(() => {
+        if(!open) setLugares([]);
+    }, [open]);
 
     if(!movie || sessions.length === 0) return <Loading text="Getting the movie..." />;
     if(lugares.length === 0 && open) return <Loading text="Loading..." />;

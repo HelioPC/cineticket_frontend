@@ -11,14 +11,15 @@ import {
     TableRow,
     Tooltip, FormControl, InputLabel, MenuItem, Select, TextareaAutosize, TextField, FormControlLabel, FormLabel, Radio, RadioGroup
 } from '@mui/material';
-import { BsTrashFill, BsFillArrowUpCircleFill } from 'react-icons/bs';
+import { BsTrashFill, BsFillArrowUpCircleFill, BsFillArrowDownCircleFill } from 'react-icons/bs';
 
 import { CinemaProps, EditMovieProps, UserType } from '../../types';
 import { BACKENDADDRESS } from '../../data/dummy';
 import { useUser } from '../../contexts/UserContext';
 import { AiOutlineArrowRight } from 'react-icons/ai';
 import { MdOutlineKeyboardArrowUp } from 'react-icons/md';
-import { AlertError } from '../Alerts';
+import { AlertError, AlertSuccess } from '../Alerts';
+import { Loading } from '../Utils';
 
 const EditUser = ({ id, title, description, release_date, poster_path, genreId }: EditMovieProps) => {
 	const [open, setOpen] = useState(false);
@@ -113,7 +114,7 @@ const UserList = () => {
 	const { user } = useUser();
 
 	useEffect(() => {
-		const getReservas = async () => {
+		const getUsers = async () => {
 
 			if(users.length !== 0) return;
 
@@ -121,23 +122,11 @@ const UserList = () => {
 			const json = await req.json();
 
 			json.map((item: UserType) => {
-                users.push(
-                    {
-                        NOME: item.NOME,
-                        NIVEL: item.NIVEL,
-                        SENHA: item.SENHA,
-                        EMAIL: item.EMAIL,
-                        ID_FUNCIONARIO: item.ID_FUNCIONARIO,
-                        ID_CINEMA: item.ID_CINEMA,
-                        CINEMA: item.CINEMA
-                    }
-                )
+				setUsers((users => [...users, item]));
 			});
-
-			console.log(users);
 		}
 
-		getReservas();
+		getUsers();
 	} , []);
 
 	const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,7 +171,7 @@ const UserList = () => {
 	};
 
 	// Remoção de funcionário
-	const handleDeleteUser = ({...prop}: UserType) => {
+	const handleDeleteUser = async ({...prop}: UserType) => {
 		if(user.nivel !== 'admin') {
 			AlertError({
 				title: 'Acesso Negado',
@@ -191,11 +180,113 @@ const UserList = () => {
 
 			return;
 		}
+		
+		const req = await fetch(`${BACKENDADDRESS}cineticket/funcionarios/${prop.ID_FUNCIONARIO}/delete`);
+		const json = await req.json();
+
+		console.log(json);
+
+		if(json.status === 'sucesso') {
+			AlertSuccess({
+				title: 'Sucesso',
+				description: `Usuário ${prop.NOME} removido com sucesso`,
+				confirm: () => window.location.reload()
+			});
+		} else {
+			AlertError({
+				title: 'Erro',
+				description: 'Falha na conexão com a Cinteticket API',
+				confirm: () => window.location.reload()
+			})
+		}
+
 	}
+
+	const handlePromoteUser = async ({...prop}: UserType) => {
+		if(user.nivel !== 'admin') {
+			AlertError({
+				title: 'Acesso Negado',
+				description: 'Você não tem permissão para realizar este tipo de ação, por favor contacte o seu administrador.'
+			});
+
+			return;
+		}
+
+		if(prop.NIVEL === 'admin') {
+			AlertError({
+				title: 'Erro',
+				description: `${prop.NOME} já é administrador.`
+			});
+
+			return;
+		}
+		
+		const req = await fetch(`${BACKENDADDRESS}cineticket/funcionarios/${prop.ID_FUNCIONARIO}/promote`);
+		const json = await req.json();
+
+		console.log(json);
+
+		if(json.status === 'sucesso') {
+			AlertSuccess({
+				title: 'Sucesso',
+				description: `Usuário ${prop.NOME} promovido com sucesso`,
+				confirm: () => window.location.reload()
+			});
+		} else {
+			AlertError({
+				title: 'Erro',
+				description: 'Falha na conexão com a Cinteticket API',
+				confirm: () => window.location.reload()
+			})
+		}
+
+	}
+
+	const handleDespromoteUser = async ({...prop}: UserType) => {
+		if(user.nivel !== 'admin') {
+			AlertError({
+				title: 'Acesso Negado',
+				description: 'Você não tem permissão para realizar este tipo de ação, por favor contacte o seu administrador.'
+			});
+
+			return;
+		}
+
+		if(prop.NIVEL === 'user') {
+			AlertError({
+				title: 'Erro',
+				description: `${prop.NOME} já está na menor categoria possível.`
+			});
+
+			return;
+		}
+		
+		const req = await fetch(`${BACKENDADDRESS}cineticket/funcionarios/${prop.ID_FUNCIONARIO}/despromote`);
+		const json = await req.json();
+
+		console.log(json);
+
+		if(json.status === 'sucesso') {
+			AlertSuccess({
+				title: 'Sucesso',
+				description: `Usuário ${prop.NOME} despromovido com sucesso`,
+				confirm: () => window.location.reload()
+			});
+		} else {
+			AlertError({
+				title: 'Erro',
+				description: 'Falha na conexão com a Cinteticket API',
+				confirm: () => window.location.reload()
+			})
+		}
+
+	}
+
+	if(users.length === 0) return <Loading text='Connecting to CineTicket API...' />
 
 	return (
 		<Paper sx={{ width: '100%', overflow: 'hidden' }}>
-			<TableContainer sx={{ maxHeight: 440 }}>
+			<TableContainer>
 				<Table stickyHeader aria-label="sticky table">
 					<TableHead>
 						<TableRow className='bg-[#DDD]'>
@@ -211,25 +302,25 @@ const UserList = () => {
 								/>
 							</TableCell>
 							<TableCell>
-								ID
+								<p className="font-bold">ID</p>
 							</TableCell>
 							<TableCell>
-								Nome
+								<p className="font-bold">Nome</p>
 							</TableCell>
                             <TableCell>
-								E-mail
+								<p className="font-bold">E-mail</p>
 							</TableCell>
 							<TableCell>
-								Categoria
+								<p className="font-bold">Categoria</p>
 							</TableCell>
                             <TableCell>
-								Cinema
+								<p className="font-bold">Cinema</p>
 							</TableCell>
 							{
 								user.nivel === 'admin' ?
 								(
 									<TableCell>
-										Actions
+										<p className="font-bold">Actions</p>
 									</TableCell>
 								):null
 							}
@@ -271,13 +362,18 @@ const UserList = () => {
                                         <TableCell>
                                             <div className='flex gap-2'>
                                                 <Tooltip title='Delete' arrow placement='top'>
-                                                    <button className='cursor-pointer'>
+                                                    <button className='cursor-pointer' onClick={() => handleDeleteUser(u)}>
                                                         <BsTrashFill className='text-[#A00]' size={18} />
                                                     </button>
                                                 </Tooltip>
                                                 <Tooltip title='Promover' arrow placement='top'>
-													<button className="flex">
-														<BsFillArrowUpCircleFill className='text-[#005]' size={18} />
+													<button className="cursor-pointer" onClick={() => handlePromoteUser(u)}>
+														<BsFillArrowUpCircleFill className='text-green-700' size={18} />
+													</button>
+                                                </Tooltip>
+												<Tooltip title='Despromover' arrow placement='top'>
+													<button className="cursor-pointer" onClick={() => handleDespromoteUser(u)}>
+														<BsFillArrowDownCircleFill className='text-blue-700' size={18} />
 													</button>
                                                 </Tooltip>
                                             </div>

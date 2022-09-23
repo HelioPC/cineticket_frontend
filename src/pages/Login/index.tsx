@@ -66,6 +66,7 @@ const Login = () => {
             
             const userAuth = {
                 id: parseInt(ret.data.ID_FUNCIONARIO),
+                id_cinema: ret.data.ID_CINEMA,
                 name: ret.data.NOME,
                 email: ret.data.EMAIL,
                 password: ret.data.SENHA,

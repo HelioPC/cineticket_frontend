@@ -8,20 +8,14 @@ import {
     TableContainer,
     TableHead,
     TablePagination,
-    TableRow,
-    Tooltip
-} from '@mui/material';
-import { BsTrashFill } from 'react-icons/bs';
-import { FaEdit } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { useUser } from '../../contexts/UserContext';
-import { CinemaProps, CidadeProps, RuaProps, SessionType } from '../../types';
+    TableRow} from '@mui/material';
+import { SessionType } from '../../types';
 import FloatingAddButton from '../FloatingAddButton';
-import NewCinema from '../NewCinema';
 import Modal from '../Modal';
 import { Loading } from '../Utils';
 import NewSessions from '../NewSessions';
 import { BACKENDADDRESS } from '../../data/dummy';
+import { useUser } from '../../contexts/UserContext';
 
 const SessionsList = () => {
     const [selectedSessionIds, setSelectedSessionIds] = useState<number[]>([]);
@@ -29,6 +23,7 @@ const SessionsList = () => {
     const [page, setPage] = useState(0);
     const [open, setOpen] = useState(false);
     const [sessions, setSessions] = useState<SessionType[]>([]);
+    const { user } = useUser();
 
     useEffect(() => {
         const getSessions = async () => {
@@ -37,7 +32,13 @@ const SessionsList = () => {
 
             if(sessions.length === 0) {
                 json.map((sess: SessionType) => {
-                    setSessions(sessions => [...sessions, sess]);
+                    if(user.nivel === 'admin') {
+                        setSessions(sessions => [...sessions, sess]);
+                    } else {
+                        if(sess.ID_CINEMA === user.id_cinema) {
+                            setSessions(sessions => [...sessions, sess]);
+                        }
+                    }
                 });
             }
         }
@@ -86,7 +87,7 @@ const SessionsList = () => {
         setPage(0);
     };
 
-    if(sessions.length === 0) return (<Loading text="Fetching..." />);
+    if(sessions.length === 0) return (<Loading text="Connecting to CineTicket API..." />);
     console.log(sessions);
     
     return (
@@ -128,9 +129,6 @@ const SessionsList = () => {
                                 <TableCell>
                                     <p className='font-bold'>Filme</p>
                                 </TableCell>
-                                <TableCell>
-                                    <p className='font-bold'>Actions</p>
-                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -169,22 +167,6 @@ const SessionsList = () => {
                                     </TableCell>
                                     <TableCell>
                                         {sess.TITULO}
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className='flex'>
-                                            <Tooltip title='Delete' arrow placement='top'>
-                                                <button className='cursor-pointer'>
-                                                    <BsTrashFill className='text-[#A00]' size={18} />
-                                                </button>
-                                            </Tooltip>
-                                            <Tooltip title='Edit' arrow placement='top'>
-                                                <button
-                                                className='cursor-pointer ml-5'
-                                                >
-                                                    <FaEdit className='text-[#00A]' size={18} />
-                                                </button>
-                                            </Tooltip>
-                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))}

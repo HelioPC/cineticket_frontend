@@ -83,7 +83,7 @@ export const Logo = () => {
 
 export const Logo2 = () => {
     return (
-        <h1 className='logo sm:text-3xl text-xl md:hover:rotate-[360deg] duration-500'>
+        <h1 className='logo text-3xl hover:rotate-[360deg] duration-500'>
             <strong className='text-gradient'>CT</strong>
         </h1>
     );

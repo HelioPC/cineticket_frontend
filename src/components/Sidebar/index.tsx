@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 // React router dom
 import { NavLink, useNavigate } from 'react-router-dom';
 // React Icons
-import { AiOutlineClose } from 'react-icons/ai';
+import { AiOutlineClose, AiOutlineAudit } from 'react-icons/ai';
 import { BsReverseLayoutTextSidebarReverse, BsClockFill } from 'react-icons/bs';
 import { FaTheaterMasks } from 'react-icons/fa';
 import { FiMenu, FiUsers } from 'react-icons/fi';
@@ -23,8 +23,7 @@ type HeaderProps = {
 }
 
 const SidebarHeader = ({ open, name, onClick }: HeaderProps) => {
-    const iconSize = 20;
-    const [account, setAccount] = useState(null);
+    const { user } = useUser();
 
     return (
         <div className={`flex gap-x-4 items-center`}>
@@ -46,7 +45,7 @@ const SidebarHeader = ({ open, name, onClick }: HeaderProps) => {
                         {name}
                     </h1>
                     <p className={`text-[#AAA] text-[12px] duration-300 ${!open && "scale-0"}`}>
-                        admin
+                        {user.nivel}
                     </p>
                 </div>
             </>
@@ -61,14 +60,24 @@ const Sidebar = () => {
     const [toggleMenu, setToggleMenu] = useState(false);
     const { width } = useWindowDimensions();
     const navigate = useNavigate();
-    const menu = [
+    var menu = [
         {title: `Eu ${user.name}`, icon: <ImProfile size={iconSize - 3} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/me`},
-        {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/cinemas`},
         {title: 'Filmes', icon: <MdLocalMovies size={iconSize} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/movies`},
-        {title: 'Funcionários', icon: <FiUsers size={iconSize - 3} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/users`},
         {title: 'Reservas', icon: <BsReverseLayoutTextSidebarReverse size={iconSize - 3} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/reservations`},
         {title: 'Sessões', icon: <BsClockFill size={iconSize - 3} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/session`}
     ];
+
+    if(user.nivel === 'admin') {
+        menu.shift();
+        menu.unshift(
+            {title: 'Meu Cinema', icon: <FaTheaterMasks size={iconSize} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/cinemas`},
+            {title: 'Funcionários', icon: <FiUsers size={iconSize - 3} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/users`},
+            {title: 'Auditoria', icon: <AiOutlineAudit size={iconSize - 3} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/auditoria`},
+        );
+        menu.unshift(
+            {title: `Eu ${user.name}`, icon: <ImProfile size={iconSize - 3} />, link: `/profile/${user.name.toLowerCase().replaceAll(' ', '')}/me`}
+        );
+    }
 
     useEffect(() => {
         if (width < 666) {
@@ -116,7 +125,7 @@ const Sidebar = () => {
                                     ({ isActive }) => (
                                         `
                                             flex items-center gap-x-4 p-2 text-sm
-                                            rounded-md text-gray-300 hover:bg-[#B81D24]
+                                            rounded-md text-gray-300 hover:bg-[#b81d1d]
                                             hover:text-white mt-2
                                         ` + (isActive ? 'bg-[#A40910]' : '')
                                     )

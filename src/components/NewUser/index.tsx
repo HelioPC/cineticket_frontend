@@ -159,7 +159,7 @@ const NewUser = ({ setOpen }: Props) => {
                         type='submit'
                         onClick={handleSubmit}
                     >
-                        SUBMIT
+                        Adicionar utilizador
                     </button>
                 </div>
             </div>

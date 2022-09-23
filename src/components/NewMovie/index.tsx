@@ -16,11 +16,12 @@ type Props = {
 
 const NewMovie = ({ setOpen }: Props) => {
     const [selectOption, setSelectOption] = useState('');
-    const [year, setYear] = useState('');
+    const [year, setYear] = useState('1960');
     const [description, setDescription] = useState('');
     const [genre, setGenre] = useState('');
     const [title, setTitle] = useState('');
     const [image, setImage] = useState('');
+    const [duration, setDuration] = useState('90');
 
     
     const options = [
@@ -34,11 +35,12 @@ const NewMovie = ({ setOpen }: Props) => {
     // { name, email, password, gender }: FormValues
     const handleSubmit = () => {
         // Check if all fields aren't filled
-        if (title === '' || image === '' || description === '' || year === '' || genre === '' || selectOption === '') {
+        if (title === '' || image === '' || description === '' || year === '' || genre === '' || selectOption === '' || duration === '') {
             AlertError({
                 title: 'Erro',
                 description: 'Preencha todos os campos para continuar'
-            })
+            });
+            setOpen(false);
             return;
         }
 
@@ -47,13 +49,15 @@ const NewMovie = ({ setOpen }: Props) => {
             AlertError({
                 title: 'Erro',
                 description: 'Ano inválido'
-            })
+            });
+            setOpen(false);
             return;
         }
 
         const data = new FormData();
         data.append('titulo', title);
         data.append('ano', year);
+        data.append('duracao', duration);
         data.append('descricao', description);
         data.append('genero', genre);
         data.append('capa', image);
@@ -69,16 +73,30 @@ const NewMovie = ({ setOpen }: Props) => {
         })
         .then(function (response) {
             //handle success
-            AlertSuccess({
-                title: 'Success',
-                description: 'Report sent successfully!'
-            });
+            if(response.data.status === 'sucesso') {
+                AlertSuccess({
+                    title: 'Successo',
+                    description: `Filme ${title} criado com sucesso`,
+                    confirm: () => window.location.reload()
+                });
+            } else {
+                AlertError({
+                    title: 'Erro',
+                    description: 'Falha na requisição com Cineticket API ⛔️',
+                    confirm: () => window.location.reload()
+                });
+            }
             console.log(response);
           })
           .catch(function (response) {
             //handle error
+            AlertError({
+                title: 'Erro',
+                description: 'Erro inesperado 🥲',
+                confirm: () => window.location.reload()
+            });
             console.log(response);
-        });
+          });
         setOpen(false);
     }
 
@@ -88,19 +106,38 @@ const NewMovie = ({ setOpen }: Props) => {
         setSelectOption(e.target.value);
     }
 
+    const handleYear = (e: any) => {
+        const newValue = Math.min(Math.max(e.target.value, 1930), 2022);
+        setYear(previousValue => newValue+'');
+    }
+
+    const handleDuration = (e: any) => {
+        const newValue = Math.min(Math.max(e.target.value, 65), 280);
+        setDuration(previousValue => newValue+'');
+    }
+
     return (
         <div>
             <div className='flex flex-col gap-6'>
                 <TextField
-                    name="fullName"
+                    name="title"
                     label="Título"
                     className='my-2'
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
 
+            <TextField
+                name="duration"
+                label="Duração (em minutos)"
+                className='my-2 w-full'
+                type='number'
+                value={duration}
+                onChange={handleDuration}
+            />
+
                 <TextField
-                    name="fullName"
+                    name="image"
                     label="URL da imagem"
                     className='my-2'
                     value={image}
@@ -108,12 +145,12 @@ const NewMovie = ({ setOpen }: Props) => {
                 />
 
                 <TextField
-                    name="fullName"
+                    name="year"
                     label="Ano de lançamento"
                     type='number'
                     className='my-2'
                     value={year}
-                    onChange={(e) => setYear(e.target.value)}
+                    onChange={handleYear}
                 />
 
                 <TextareaAutosize
@@ -169,7 +206,7 @@ const NewMovie = ({ setOpen }: Props) => {
                         type='submit'
                         onClick={handleSubmit}
                     >
-                        SUBMIT
+                        Criar filme
                     </button>
                 </div>
             </div>

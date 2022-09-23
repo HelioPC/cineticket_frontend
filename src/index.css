@@ -13,6 +13,7 @@ html, body {
 body {
   color:#fff;
   background:#0a0000;
+  min-width: 350px;
 	margin: 0;
 	padding: 0;
   font-family: "Open Sans", sans-serif;
@@ -55,3 +56,9 @@ button { cursor: pointer; }
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  input {
+    @apply focus:!shadow-none focus:!ring-0;
+  }
+}

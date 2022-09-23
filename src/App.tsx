@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import MakeReserva from "./pages/MakeReserva";
 import Page404 from "./pages/Page404";
 import Profile from "./pages/profile";
+import Auditoria from "./pages/profile/pages/Auditoria";
 import Cinemas from "./pages/profile/pages/Cinemas";
 import Edit from "./pages/profile/pages/Edit";
 import Movies from "./pages/profile/pages/Movies";
@@ -19,6 +20,7 @@ import Reservas from "./pages/Reservas";
 import Sessions from "./pages/Sessions";
 
 const App = () => {
+    const { user } = useUser();
 	return (
 		<BrowserRouter>
             <Routes>
@@ -31,8 +33,15 @@ const App = () => {
                 <Route path="/profile/:id/" element={<ProtectedRoute />}>
                     <Route path="/profile/:id/" element={<Profile />} />
                     <Route path="/profile/:id/movies" element={<Movies />} />
-                    <Route path="/profile/:id/cinemas/*" element={<Cinemas />} />
-                    <Route path="/profile/:id/users" element={<UsersPage />} />
+                    {
+                        user.nivel === 'admin' && (
+                            <>
+                                <Route path="/profile/:id/users" element={<UsersPage />} />
+                                <Route path="/profile/:id/cinemas" element={<Cinemas />} />
+                                <Route path="/profile/:id/auditoria" element={<Auditoria />} />
+                            </>
+                        )
+                    }
                     <Route path='/profile/:id/reservations' element={<Reservas />} />
                     <Route path='/profile/:id/session' element={<Session />} />
                     <Route path="/profile/:id/me" element={<Edit />} />

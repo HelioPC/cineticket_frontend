@@ -23,13 +23,17 @@ import NewCinema from '../NewCinema';
 import FloatingAddButton from '../FloatingAddButton';
 import { CinemaProps, RuaProps, CidadeProps } from '../../types';
 import { BACKENDADDRESS } from '../../data/dummy';
+import { Loading } from '../Utils';
+import Cinema from '../../pages/profile/pages/Cinema';
 
 const CinemaList = () => {
     const [selectedCinemaIds, setSelectedCinemaIds] = useState<number[]>([]);
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(0);
 	const [cinemas, setCinemas] = useState<CinemaProps[]>([]);
+    const [cinemaId, setCinemaId] = useState('');
     const [open, setOpen] = useState(false);
+    const [open2, setOpen2] = useState(false);
     const { user } = useUser();
     const navigate = useNavigate();
     const [cidades, setCidades] = useState<CidadeProps[]>([]);
@@ -45,8 +49,6 @@ const CinemaList = () => {
             json.map((cidade: CidadeProps) => {
                 setCidades(cidades => [...cidades, cidade]);
             });
-
-            console.log(cidades);
         }
 
         getCidades();
@@ -71,17 +73,13 @@ const CinemaList = () => {
     useEffect(() => {
 
 		const getCinemas = async () => {
-			const req = await fetch(`${BACKENDADDRESS}cineticket/cinemas`);
+            if(cinemas.length !== 0) return;
+			
+            const req = await fetch(`${BACKENDADDRESS}cineticket/cinemas`);
 			const json = await req.json();
 
 			json.map((item: CinemaProps) => {
-				cinemas.push(
-					{
-						ID_CINEMA: item.ID_CINEMA,
-						NOME: item.NOME,
-						LOCALIZACAO: item.LOCALIZACAO
-					}
-				)
+				setCinemas(cinemas => [...cinemas, item]);
 			});
 		}
 
@@ -129,6 +127,8 @@ const CinemaList = () => {
     setPage(0);
   };
 
+  if(cinemas.length === 0) return <Loading text='Connecting to CineTicket API...' />
+
     return (
         <React.Fragment>
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -147,17 +147,14 @@ const CinemaList = () => {
                                     onChange={handleSelectAll}
                                 />
                                 </TableCell>
-                                <TableCell style={{ minWidth: 170 }}>
-                                    ID
+                                <TableCell>
+                                    <p className="font-bold">ID</p>
                                 </TableCell>
                                 <TableCell>
-                                    Nome
+                                    <p className="font-bold">Nome</p>
                                 </TableCell>
                                 <TableCell>
-                                    Localização
-                                </TableCell>
-                                <TableCell>
-                                    Actions
+                                    <p className="font-bold">Localização</p>
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -168,8 +165,8 @@ const CinemaList = () => {
                                     hover
                                     key={index}
                                     selected={selectedCinemaIds.indexOf(index) !== -1}
-                                    className='cursor-pointer'
-                                    onClick={() => navigate(`/profile/${user.email.replaceAll(' ', '')}/cinemas/${cine.ID_CINEMA}`)}
+                                    className="cursor-pointer"
+                                    onClick={() => {setCinemaId(cine.ID_CINEMA);setOpen2(true);}}
                                 >
                                     <TableCell padding="checkbox">
                                         <Checkbox
@@ -186,22 +183,6 @@ const CinemaList = () => {
                                     </TableCell>
                                     <TableCell>
                                         {cine.LOCALIZACAO}
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className='flex'>
-                                            <Tooltip title='Delete' arrow placement='top'>
-                                                <button className='cursor-pointer'>
-                                                    <BsTrashFill className='text-[#A00]' size={18} />
-                                                </button>
-                                            </Tooltip>
-                                            <Tooltip title='Edit' arrow placement='top'>
-                                                <button
-                                                className='cursor-pointer ml-5'
-                                                >
-                                                    <FaEdit className='text-[#00A]' size={18} />
-                                                </button>
-                                            </Tooltip>
-                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -228,6 +209,15 @@ const CinemaList = () => {
                 title='Formulário Cinemas'
             >
                 <NewCinema cidades={cidades} ruas={ruas} setOpen={setOpen} setCidade={setCidade} />
+            </Modal>
+
+            <Modal
+                open={open2}
+                setOpen={setOpen2}
+                title={`Adicionar sala ao cinema ${cinemaId}`}
+                maxWidth='xl'
+            >
+                <Cinema name={cinemaId} setOpen={setOpen2} />
             </Modal>
         </React.Fragment>
     );

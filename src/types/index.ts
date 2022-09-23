@@ -56,27 +56,33 @@ export type RuaProps = {
     NOME: string;
 }
 
-export type EditMovieProps = {
-    id?: number;
-    title: string;
-    description: string;
-    release_date: string;
-    poster_path: string;
-    genreId: number;
-}
-
 export type MovieProps = {
     ID_FILME: string;
     ANO: string;
     TITULO: string;
+    DURACAO: string;
     DESCRICAO: string;
     GENERO: string;
     CLASSIFICACAO: string;
     CAPA_URL: string;
+    setOpen?: (open: boolean) => void;
+}
+
+export type EditMovieProps = {
+    ID_FILME: string;
+    ANO: string;
+    TITULO: string;
+    DURACAO: string;
+    DESCRICAO: string;
+    GENERO: string;
+    CLASSIFICACAO: string;
+    CAPA_URL: string;
+    setOpen: (open: boolean) => void;
 }
 
 export type SessionType = {
     ID: string;
+    ID_CINEMA: string;
     CINEMA: string;
     TITULO: string;
     DATA: string;
@@ -95,6 +101,7 @@ export type LugarType = {
 
 export type User = {
     id: number;
+    id_cinema: string;
     name: string;
     nivel: string;
     email: string;
@@ -111,21 +118,18 @@ export type UserType = {
     CINEMA: string;
 }
 
-/*
-{
-    "ID_RESERVA":"261",
-    "CLIENTE":"Kiesse",
-    "FILME":"Jurassic World Dominion",
-    "DATA":"25-08-2022 19:00",
-    "LUGARES":"1",
-    "CINEMA":"CineTicket Camama",
-    "SALA":"C2",
-    "ESTADO":"0"
+// reservas/auditoria
+export type AuditoriaType = {
+    ID_AUDITORIA: string;
+    FUNCIONARIO: string;
+    CLIENTE: string;
+    ID_RESERVA: string;
+    LUGARES: string;
 }
-*/
 
 export type ReservaType = {
     ID_RESERVA: string;
+    ID_CINEMA: string;
     CLIENTE: string;
     FILME: string;
     DATA: string;
