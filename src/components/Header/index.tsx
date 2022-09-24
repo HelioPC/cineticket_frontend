@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AiOutlineClose } from 'react-icons/ai';
+import { AiOutlineClose, AiOutlineLogin } from 'react-icons/ai';
 import { FiMenu } from 'react-icons/fi';
 import { NavLink } from 'react-router-dom';
 import { Logo2 } from '../Logo';
@@ -39,8 +39,6 @@ const Header = ({ classProp }: HeaderProps) => {
     const [color, setColor] = useState(true);
     const headerElements = [
         { title: 'Home', url: '/' },
-        { title: 'Filmes', url: '/sessions' },
-        { title: 'About', url: '/about' }
     ];
 
     useEffect(() => {
@@ -68,7 +66,7 @@ const Header = ({ classProp }: HeaderProps) => {
                         className="
                             md:flex hidden list-none flex-row
                             justify-space-between items-center
-                            flex-initial
+                            flex-initial w-full
                         "
                     >
                         {
@@ -76,6 +74,14 @@ const Header = ({ classProp }: HeaderProps) => {
                                 <NavbarItem title={item.title} url={item.url} key={index} />
                             ))
                         }
+                        <li className={`
+                            ml-auto rounded-full p-2 flex items-center justify-center
+                            duration-500 ${color ? 'bg-black text-white' : 'bg-white text-black'}
+                        `}>
+                            <a href="/login">
+                                <AiOutlineLogin size={20} className="hover:text-[#B81D24] duration-500" />
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

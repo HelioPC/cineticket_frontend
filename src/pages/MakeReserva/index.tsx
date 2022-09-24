@@ -9,6 +9,7 @@ import { BACKENDADDRESS } from "../../data/dummy";
 import { LugarType, MovieProps, SessionType } from "../../types";
 import Modal from "../../components/Modal";
 import SelectPlace from "../../components/SelectPlace";
+import Footer from "../../components/Footer";
 
 const MakeReserva = () => {
     const path = useParams();
@@ -16,6 +17,7 @@ const MakeReserva = () => {
     const [open, setOpen] = useState(false);
     const [movie, setMovie] = useState<MovieProps>();
     const [sessions, setSessions] = useState<SessionType[]>([]);
+    const [filteredSessions, setFilteredSessions] = useState<SessionType[]>([]);
     const [lugares, setLugares] = useState<LugarType[]>([]);
     const [price, setPrice] = useState(0);
 
@@ -37,7 +39,7 @@ const MakeReserva = () => {
 
                     if(sessions.length === 0) {
                         json1.map((sess: SessionType) => {
-                            setSessions(sessions => [...sessions, sess]);
+                            setSessions((sessions) => [...sessions, sess]);
                         });
                     }
                 }
@@ -46,6 +48,23 @@ const MakeReserva = () => {
 
 		getMovies();
     } , []);
+
+    useEffect(() => {
+        console.log(sessions);
+        const filterSessionsByCinema = () => {
+            if(selectedCinema === '' || selectedCinema === 'Selecione o cinema') return;
+            
+            setFilteredSessions([]);
+            sessions.map((item, index) => {
+                if(item.CINEMA === selectedCinema) {
+                    console.log(item);
+                    setFilteredSessions((sessions) => [...sessions, item]);
+                }
+            });
+        }
+
+        filterSessionsByCinema();
+    }, [selectedCinema]);
 
     const getLugares = async (id: string) => {
         //const req2 = await fetch(`http://192.168.43.35/cineticket/sessoes/${id}/lugares`);
@@ -91,19 +110,30 @@ const MakeReserva = () => {
     console.log(removeSessionsWithDuplicateCinema(sessions));
 
     return (
-        <div className="w-screen min-h-screen bg-[#111] py-20 scroll sm:px-16 px-10">
+        <div className="w-screen min-h-screen bg-[#111] scroll">
             <Header />
             
             <div className="w-full h-full flex flex-col">
-                <div className="w-full h-[450px]">
-                    <img
-                        src={movie.CAPA_URL}
-                        alt={movie.TITULO}
-                        className="w-full h-full rounded-lg object-fill"
-                    />
+                <div
+                    className="w-full h-[720px] rounded-b-lg bg-cover bg-center bg-no-repeat"
+                    style={{
+                        backgroundImage: `url(${movie.CAPA_URL})`,
+                        display: `block`
+                    }}
+                >
+                    <div className="w-full h-full bg-[linear-gradient(to_top,#111_10%,transparent_80%)]">
+                        <div className="w-full h-full flex flex-col justify-center pl-8 pb-36 bg-[linear-gradient(to_right,#111_30%,transparent_70%)]">
+                            <div className="text-[60px] font-bold max-w-[60%] text-white">
+                                {movie.TITULO}
+                                </div>
+                            <div className="text-[18px] mt-[35px] md:max-w-[30%] sm:max-w-[60%] text-white">
+                                {movie.DESCRICAO}
+                                </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="flex md:flex-row flex-col gap-x-10 gap-y-10 mt-20">
+                <div className="flex md:flex-row flex-col gap-x-10 gap-y-10 mt-20 sm:px-16 px-10">
                     <img
                         src={`${movie.CAPA_URL}`}
                         alt={movie.TITULO}
@@ -125,14 +155,6 @@ const MakeReserva = () => {
                             <p className="font-bold">Classificação:</p>
                             <p>{movie.CLASSIFICACAO}</p>
                         </div>
-                        <div className="flex gap-2">
-                            <p className="font-bold"></p>
-                            <p></p>
-                        </div>
-                        <div className="flex gap-2">
-                            <p className="font-bold"></p>
-                            <p></p>
-                        </div>
                         
                         <div className="mt-5 md:w-4/5 w-full">
                             <select
@@ -141,12 +163,12 @@ const MakeReserva = () => {
                                 value={selectedCinema}
                                 onChange={(e) => setSelectedCinema(e.target.value)}
                             >
-                                <option key={999}>
+                                <option key={999} value="Selecione o cinema">
                                     Selecione o cinema
                                 </option>
                                 {
                                     removeSessionsWithDuplicateCinema(sessions).map((cine, index) => (
-                                        <option key={index}>
+                                        <option key={index} value={cine.CINEMA}>
                                             {cine.CINEMA}
                                         </option>
                                     ))
@@ -170,7 +192,7 @@ const MakeReserva = () => {
                                                 </TableHead>
                                                 <TableBody>
                                                     {
-                                                        sessions.map((sess, index) => (
+                                                        filteredSessions.map((sess, index) => (
                                                             <TableRow key={index}>
                                                                 <TableCell>{sess.SALA}</TableCell>
                                                                 <TableCell>{sess.HORA}</TableCell>
@@ -205,6 +227,8 @@ const MakeReserva = () => {
             >
                 <SelectPlace lugares={lugares} price={price} setOpen={setOpen} />
             </Modal>
+
+            <Footer />
         </div>
     );
 }

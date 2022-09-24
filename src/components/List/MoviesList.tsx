@@ -45,7 +45,7 @@ const EditMovie = ({ TITULO, DESCRICAO, DURACAO, ANO, CAPA_URL, CLASSIFICACAO, I
 
 	const handleSubmit = () => {
 		// Check if all fields aren't filled
-        if (title === '' || image === '' || description === '' || year === '' || genre === '' || selectOption === '' || duration === '') {
+        if (title === '' || image === '' || description === '' || year === '' || parseInt(year) < 1930 || genre === '' || selectOption === '' || duration === '') {
             AlertError({
                 title: 'Erro',
                 description: 'Preencha todos os campos para continuar'
@@ -112,7 +112,7 @@ const EditMovie = ({ TITULO, DESCRICAO, DURACAO, ANO, CAPA_URL, CLASSIFICACAO, I
 	}
 
 	const handleYear = (e: any) => {
-        const newValue = Math.min(Math.max(e.target.value, 1960), 2022)
+        const newValue = Math.min(Math.max(e.target.value, 0), 2022)
         setYear(previousValue => newValue+'');
     }
 	
@@ -163,7 +163,7 @@ const EditMovie = ({ TITULO, DESCRICAO, DURACAO, ANO, CAPA_URL, CLASSIFICACAO, I
 			/>
 
 			<TextField
-				label='Poster'
+				label='Url'
 				className='mt-2'
 				value={image}
 				onChange={(e) => setImage(e.target.value)}
@@ -206,7 +206,7 @@ const EditMovie = ({ TITULO, DESCRICAO, DURACAO, ANO, CAPA_URL, CLASSIFICACAO, I
 					type='submit'
 					onClick={handleSubmit}
 				>
-					SUBMIT
+					Salvar
 				</button>
 			</div>
 		</div>

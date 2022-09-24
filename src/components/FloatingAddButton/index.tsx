@@ -9,7 +9,7 @@ type ButtonProps = {
 const FloatingAddButton = ({ onClick, title }: ButtonProps) => {
     return (
         <Tooltip title={title} arrow placement='top'>
-            <button className='fixed bottom-20 right-20 flex hover:-translate-y-2 duration-500' onClick={onClick}>
+            <button className='fixed bottom-10 right-20 flex hover:-translate-y-2 duration-500' onClick={onClick}>
                 <BsPlusCircleFill size={45} />
             </button>
         </Tooltip>

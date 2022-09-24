@@ -9,9 +9,10 @@ import {
 	TableHead,
 	TablePagination,
 	TableRow,
+	TextField,
 	Tooltip
 } from '@mui/material';
-import { AiFillCheckCircle, AiFillCloseCircle } from 'react-icons/ai';
+import { AiFillCheckCircle, AiFillCloseCircle, AiOutlineDownload } from 'react-icons/ai';
 import { BsTrashFill } from 'react-icons/bs';
 
 import { ReservaType } from '../../types';
@@ -63,7 +64,9 @@ const ReservaList = () => {
 	const [selectedReservasIds, setSelectedReservasIds] = useState<number[]>([]);
 	const [limit, setLimit] = useState(10);
 	const [page, setPage] = useState(0);
+	const [search, setSearch] = useState('');
 	const [reservas, setReservas] = useState<ReservaType[]>([]);
+	const [filteredreservas, setFilteredReservas] = useState<ReservaType[]>([]);
 	const { user } = useUser();
 
 	useEffect(() => {
@@ -78,9 +81,11 @@ const ReservaList = () => {
 			json.map((item: ReservaType) => {
 				if (user.nivel === 'admin') {
 					setReservas((reservas => [...reservas, item]));
+					setFilteredReservas((reservas => [...reservas, item]));
 				} else {
 					if (user.id_cinema === item.ID_CINEMA) {
 						setReservas((reservas => [...reservas, item]));
+						setFilteredReservas((reservas => [...reservas, item]));
 					}
 				}
 			});
@@ -133,6 +138,20 @@ const ReservaList = () => {
 		}
 	}
 
+	useEffect(() => {
+		const handleSearch = () => {
+			if(search === '') {
+				setFilteredReservas(reservas);
+				return;
+			}
+			
+			const filteredReservas = reservas.filter((item) => {
+				return item.CLIENTE.toLowerCase().includes(search.toLowerCase());
+			});
+			setFilteredReservas(filteredReservas);
+		}
+		handleSearch();
+	}, [search]);
 
 	const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
 		let newSelectedMoviesIds: number[];
@@ -176,7 +195,7 @@ const ReservaList = () => {
 	};
 
 	if (reservas.length === 0) return <Loading text='Connecting to CineTicket API...' />
-	else console.log(reservas);
+	else console.log(filteredreservas);
 
 	return (
 		reservas.length === 0 ?
@@ -185,21 +204,31 @@ const ReservaList = () => {
 			)
 			:
 			(
-				<Paper sx={{ width: '100%', overflow: 'hidden' }}>
+				<Paper sx={{ width: '100%', overflow: 'hidden' }} className="py-2">
+					<TextField
+						name='search'
+						label='Pesquisar por cliente'
+						className='w-full'
+						value={search}
+						onChange={(e) => setSearch(e.target.value)}
+					/>
 					<TableContainer sx={{ maxHeight: 440 }}>
 						<Table stickyHeader aria-label="sticky table">
 							<TableHead>
 								<TableRow className='bg-[#DDD]'>
 									<TableCell padding="checkbox">
 										<Checkbox
-											checked={selectedReservasIds.length === reservas.length}
+											checked={selectedReservasIds.length === filteredreservas.length}
 											color="primary"
 											indeterminate={
 												selectedReservasIds.length > 0
-												&& selectedReservasIds.length < reservas.length
+												&& selectedReservasIds.length < filteredreservas.length
 											}
 											onChange={handleSelectAll}
 										/>
+									</TableCell>
+									<TableCell>
+										<p className="font-bold">ID</p>
 									</TableCell>
 									<TableCell>
 										<p className="font-bold">Cliente</p>
@@ -225,13 +254,20 @@ const ReservaList = () => {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{reservas.slice(page * limit, page * limit + limit)
+								{filteredreservas.slice(page * limit, page * limit + limit)
 									.map((res, index) => (
 										<TableRow
 											hover
 											key={index}
 											selected={selectedReservasIds.indexOf(index) !== -1}
 										>
+											<TableCell padding="checkbox">
+												<Checkbox
+													checked={selectedReservasIds.indexOf(index) !== -1}
+													onChange={(event) => handleSelectOne(event, index)}
+													value="true"
+												/>
+											</TableCell>
 											<TableCell>{res.ID_RESERVA}</TableCell>
 											<TableCell>{res.CLIENTE}</TableCell>
 											<TableCell>
@@ -274,6 +310,19 @@ const ReservaList = () => {
 																</>
 															) : null
 													}
+													{
+														res.ESTADO === '1' ? 
+															(
+																<Tooltip title='Baixar bilhete' arrow placement='top'>
+																	<a
+																		className='cursor-pointer'
+																		href={`${BACKENDADDRESS}cineticket/bilhetes/${res.ID_RESERVA}/`}
+																	>
+																		<AiOutlineDownload className='text-blue-400 hover:text-blue-600' size={20} />
+																	</a>
+																</Tooltip>
+															) : null
+													}
 													<Tooltip title='Eliminar' arrow placement='top'>
 														<button
 															className='cursor-pointer'
@@ -292,7 +341,7 @@ const ReservaList = () => {
 
 					<TablePagination
 						component="div"
-						count={reservas.length}
+						count={filteredreservas.length}
 						onPageChange={handleChangePage}
 						onRowsPerPageChange={handleChangeRowsPerPage}
 						page={page}

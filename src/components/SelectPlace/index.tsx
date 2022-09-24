@@ -15,7 +15,13 @@ const SelectPlace = (prop: Props) => {
     console.log(prop.lugares);
     const [selectedPlaces, setSelectedPlaces] = useState<string[]>([]);
     const [name, setName] = useState<string>("");
-    const [phone, setPhone] = useState<string>("910000000");
+    const [phone, setPhone] = useState<string>("9");
+    const [allFields, setAllFields] = useState(true);
+
+    useEffect(() => {
+        if(name === '' || name.length < 2 || phone.length !== 9) setAllFields(true);
+        else setAllFields(false);
+    }, [name, phone, selectedPlaces]);
 
     const handleSelectPlace = (place: string, estado: string) => {
         if (estado === "1") return;
@@ -28,6 +34,10 @@ const SelectPlace = (prop: Props) => {
     }
 
     const handleReserve = () => {
+        if(allFields) {
+            return;
+        }
+        
         // Converter selectedPlaces para string única
         const places = selectedPlaces.join(",");
         
@@ -46,11 +56,14 @@ const SelectPlace = (prop: Props) => {
         })
         .then(function (response) {
             //handle success
+            console.log(response);
             if(response.data.status === 'sucesso') {
                 AlertSuccess({
                     title: 'Successo',
                     description: `Reserva efetuada com sucesso ✅`,
-                    confirm: () => window.location.reload()
+                    confirm: () => window.location.reload(),
+                    link: `${BACKENDADDRESS}cineticket/recibo/${response.data.codigo}/`,
+                    message: 'Baixe o seu recibo'
                 });
             } else {
                 AlertError({
@@ -74,7 +87,7 @@ const SelectPlace = (prop: Props) => {
     }
 
     const handleTamanho = (e: any) => {
-        const newValue = Math.min(Math.max(e.target.value, 910000000), 999999999)
+        const newValue = Math.min(Math.max(e.target.value, 0), 999999999)
         setPhone(previousValue => newValue+'');
     }
     
@@ -106,7 +119,7 @@ const SelectPlace = (prop: Props) => {
                             `}
                             onClick={() => handleSelectPlace(lugar.ID_DISPONIVEL, lugar.ESTADO)}
                         >
-                            {index}
+                            {index+1}
                         </div>
                     ))
                 }
@@ -131,7 +144,16 @@ const SelectPlace = (prop: Props) => {
             {selectedPlaces.length > 0 && phone !== "" && name !== "" ? 
                 (
                     <button
-                        className='px-2 py-1 w-full mt-6 origin-bottom bg-[#B81D24] hover:bg-[#980D14] hover:scale-105 duration-500 transition-all text-white rounded-md'
+                        className={`
+                            px-2 py-1 w-full mt-6 origin-bottom
+                            duration-500 transition-all text-white rounded-md
+                            ${
+                                allFields ?
+                                'bg-[#AAA] cursor-not-allowed':
+                                'bg-[#B81D24] hover:bg-[#980D14] hover:scale-105'
+
+                            }
+                        `}
                         type='submit'
                         onClick={handleReserve}
                     >

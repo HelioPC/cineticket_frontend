@@ -62,7 +62,7 @@ const ChangeData = ({ setOpen }: Props) => {
                         AlertSuccess({
                             title: 'Success',
                             description: `Dados do utilizador '${nome}' alterado com sucesso`,
-                            confirm: () => { window.location.reload(); }
+                            confirm: () => window.location.reload()
                         });
                     } else {
                         AlertError({
@@ -108,7 +108,7 @@ const ChangeData = ({ setOpen }: Props) => {
                     type='submit'
                     onClick={handleSubmit}
                 >
-                    SUBMIT
+                    Alterar
                 </button>
             </div>
         </div>

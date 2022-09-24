@@ -45,59 +45,90 @@ const Home = () => {
     const [selectedGenre, setSelectedGenre] = useState<string>("");
     const [selectedYear, setSelectedYear] = useState<string>("");
     const [backendMovies, setBackendMovies] = useState<MovieProps[]>([]);
+    const [years, setYears] = useState<string[]>([]);
+    const [genres, setGenres] = useState<string[]>([]);
 
     useEffect(() => {
         const getMovies = async () => {
 
-			if(backendMovies.length !== 0) return;
+            if (backendMovies.length !== 0) return;
 
-			try {
+            try {
                 const req = await fetch(`${BACKENDADDRESS}cineticket/filmes/exibicao`);
                 const json = await req.json();
+
+                const fetchedYears: string[] = [];
+                const fetchedGenres: string[] = [];
 
                 json.map((item: MovieProps) => {
                     setBackendMovies((movies => [...movies, item]));
                     setFilteredMovies((movies => [...movies, item]));
+                    fetchedYears.push(item.ANO);
+                    fetchedGenres.push(item.GENERO);
+                });
+                
+                fetchedYears.filter((item, index) => {
+                    return fetchedYears.findIndex((year) => year === item) === index;
+                }).map((item) => {
+                    setYears((years) => [...years, item]);
+                });
+
+                fetchedGenres.filter((item, index) => {
+                    return fetchedGenres.findIndex((genre) => genre === item) === index;
+                }).map((item) => {
+                    setGenres((genres) => [...genres, item]);
                 });
             } catch (error) {
                 console.log("Conection to cineticket API failed 😥");
             }
-		}
+        }
 
-		getMovies();
-    } , []);
-    
+        getMovies();
+    }, []);
+
     // Filter movies by genre
     useEffect(() => {
         const filterMoviesByGenre = () => {
             // Check if is already filtered by genre
-            if(selectedGenre !== "") {
-                setFilteredMovies(backendMovies.filter(movie => movie.GENERO === selectedGenre));
-            } else {
+            var exists = false;
+            setFilteredMovies(backendMovies.filter(movie => {
+                if(movie.GENERO === selectedGenre && (movie.ANO === selectedYear || selectedYear === '')) {
+                    exists = true;
+                    return movie;
+                }
+            }));
+
+            if(!exists) {
                 setFilteredMovies(backendMovies);
+                setSelectedGenre('');
+                setSelectedYear('');
             }
         }
         filterMoviesByGenre();
-    } , [selectedGenre]);
+    }, [selectedGenre]);
 
     // Filter movies by year
     useEffect(() => {
         const filterMoviesByYear = () => {
             // Check if is already filtered by year
-            if(selectedYear !== "") {
-                const filtered = filteredMovies.filter(movie => movie.ANO === selectedYear);
-                if(filtered.length > 0) {
-                    setFilteredMovies(filtered);
+            var exists = false;
+            setFilteredMovies(backendMovies.filter(movie => {
+                if(movie.ANO === selectedYear && (movie.GENERO === selectedGenre || selectedGenre === '')) {
+                    exists = true;
+                    return movie;
                 }
-            } else {
-                setFilteredMovies(filteredMovies);
+            }));
+
+            if(!exists) {
+                setFilteredMovies(backendMovies);
+                setSelectedGenre('');
+                setSelectedYear('');
             }
         }
         filterMoviesByYear();
-    } , [selectedYear]);
+    }, [selectedYear]);
 
-    if(filteredMovies.length === 0) return <Loading text="Connecting to CineTicket API..." />;
-    console.log(backendMovies);
+    if (filteredMovies.length === 0) return <Loading text="Connecting to CineTicket API..." />;
 
     return (
         <div className="w-full min-h-screen bg-[#111] sm:pt-0 pt-40">
@@ -106,71 +137,53 @@ const Home = () => {
 
             {
                 backendMovies.length !== 0 ?
-                (
-                    <MainMovie
-                        image={`${backendMovies[0].CAPA_URL}`}
-                        title={backendMovies[0].TITULO}
-                        releaseDate={backendMovies[0].DESCRICAO}
-                    />
-                ) : (
-                    <div className="w-full h-96" />
-                )
+                    (
+                        <MainMovie
+                            image={`${backendMovies[0].CAPA_URL}`}
+                            title={backendMovies[0].TITULO}
+                            releaseDate={backendMovies[0].DESCRICAO}
+                        />
+                    ) : (
+                        <div className="w-full h-96" />
+                    )
             }
 
             <div className="sm:px-16 px-6">
-                <div className="filter-bar flex lg:flex-row flex-col lg:justify-between justify-center gap-10 items-center bg-black py-5 px-8 rounded-3xl mb-8">
+                <div className="filter-bar flex lg:flex-row flex-col lg:justify-between justify-center gap-10 items-center bg-black py-5 px-8 rounded-3xl mb-8 sm:hover:shadow-[#333] sm:hover:shadow-[0px_7px_29px_0px] duration-500">
 
                     <div className="flex sm:flex-row flex-col lg:gap-2 gap-5">
 
                         <select
                             name="genre"
-                            className="bg-transparent border-none rounded-lg"
+                            className="bg-black border-none rounded-lg"
                             onChange={(e) => setSelectedGenre(e.target.value)}
                         >
-                            <option value="">All Genres</option>
+                            <option value="">Todos gêneros</option>
                             {
-                                Object.keys(GENRES).map((key, index) => (
-                                    <option key={index} value={key}>{GENRES[key]}</option>
+                                genres.map((genre, index) => (
+                                    <option key={index} value={genre}>
+                                        {genre}
+                                    </option>
                                 ))
                             }
                         </select>
 
                         <select
                             name="year"
-                            className="bg-transparent border-none rounded-lg"
+                            className="bg-black border-none rounded-lg"
                             onChange={(e) => setSelectedYear(e.target.value)}
                         >
                             <option value="">Todos anos</option>
-                            <option value="2022">2022</option>
-                            <option value="2021">2021</option>
+                            {
+                                years.map((year, index) => (
+                                    <option key={index} value={year}>
+                                        {year}
+                                    </option>
+                                ))
+                            }
                         </select>
 
                     </div>
-
-                    <div className="filter-radios bg-[rgba(70,0,0,.5)] sm:p-2.5 p-2 flex justify-center relative rounded-2xl">
-
-                        <input
-                            type="radio" name="grade" id="featured" defaultChecked
-                            onChange={(e) => {console.log(e.target.value)}}
-                        />
-                        <label htmlFor="featured">Featured</label>
-
-                        <input
-                            type="radio" name="grade" id="popular"
-                            onChange={(e) => {console.log(e.target.value)}}
-                        />
-                        <label htmlFor="popular">Popular</label>
-
-                        <input
-                            type="radio" name="grade" id="newest"
-                            onChange={(e) => {console.log(e.target.value)}}
-                        />
-                        <label htmlFor="newest">Novos</label>
-
-                        <div className="checked-radio-bg"></div>
-
-                    </div>
-
                 </div>
             </div>
 
@@ -181,13 +194,15 @@ const Home = () => {
                             <MovieCard
                                 key={index}
                                 imageUrl={item.CAPA_URL}
+                                type={item.GENERO}
                                 title={item.TITULO}
-                                type={[28]}
-                                url='/'
                                 releaseDate={item.ANO}
-                                category={[28]}
                             />
-                        )) : null
+                        )) : (
+                            <div className="w-full h-full flex justify-center items-center" >
+                                <h1>Sem filmes em exibição</h1>
+                            </div>
+                        )
                     }
                 </div>
             </main>

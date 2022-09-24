@@ -91,7 +91,7 @@ const NewSessions = ({ setOpen }: Props) => {
     const year = (new Date()).getFullYear();
     
     const handleSubmit = () => {
-        if(selectedCinema === '' || selectedMovie === undefined || selectedSala === '' || date === '' || time === '' || price === '') {
+        if(selectedCinema === '' || selectedMovie === undefined || selectedSala === '' || date === '' || time === '' || price === '' || parseInt(price) < 1000) {
             return;
         }
 
@@ -233,7 +233,7 @@ const NewSessions = ({ setOpen }: Props) => {
 
             <input
                 type='number' className='rounded-md'
-                min={1000}
+                min={0}
                 max={10000}
                 placeholder='Introduza o preço' value={price}
                 onChange={(e) => setPrice(e.target.value)}

@@ -1,57 +1,45 @@
-export const API_KEY = 'd5b0fb3cfa63665e9e8d717a670d4529';
-export const API_BASE = 'https://api.themoviedb.org/3';
+import { BACKENDADDRESS } from "../data/dummy";
+
+/*
+    <TableCell>
+        {cine[Object.keys(cinemas)[0] as keyof CinemaProps]}
+    </TableCell>
+*/
 
 const basicFetch = async (endpoint: string) => {
-    const req = await fetch(`${API_BASE}${endpoint}`);
+    const req = await fetch(`${BACKENDADDRESS}cineticket/${endpoint}`);
     const json = await req.json();
 
     return json;
 }
 
 const api = {
-    getHomeList: async () => {
-        return [
-            {
-                slug: 'originals',
-                title: 'Originais da netflix',
-                items: await basicFetch(`/discover/tv?with_network=213&language=en-US&api_key=${API_KEY}`)
-            },
-            {
-                slug: 'trending',
-                title: 'Recomendados para Você',
-                items: await basicFetch(`/trending/all/week?language=en-US&api_key=${API_KEY}`)
-            },
-            {
-                slug: 'toprated',
-                title: 'Em Alta',
-                items: await basicFetch(`/movie/top_rated?language=en-US&api_key=${API_KEY}`)
-            },
-            {
-                slug: 'action',
-                title: 'Ação',
-                items: await basicFetch(`/discover/movie?with_genres=28&language=en-US&api_key=${API_KEY}`)
-            },
-            {
-                slug: 'comedy',
-                title: 'Comédia',
-                items: await basicFetch(`/discover/movie?with_genres=35&language=en-US&api_key=${API_KEY}`)
-            },
-            {
-                slug: 'horror',
-                title: 'Terror',
-                items: await basicFetch(`/discover/movie?with_genres=27&language=en-US&api_key=${API_KEY}`)
-            },
-            {
-                slug: 'romance',
-                title: 'Romance',
-                items: await basicFetch(`/discover/movie?with_genres=10749&language=en-US&api_key=${API_KEY}`)
-            },
-            {
-                slug: 'documentary',
-                title: 'Documentário',
-                items: await basicFetch(`/discover/movie?with_genres=99&language=en-US&api_key=${API_KEY}`)
-            },
-        ]
+    getAllMovies: async () => {
+        return await basicFetch('/');
+    },
+    getMoviesWithSession: async () => {
+        return await basicFetch('filmes/exibicao');
+    },
+    getMovie: async () => {
+        return await basicFetch('/');
+    },
+    getCinemas: async () => {
+        return await basicFetch('/');
+    },
+    getUsers: async () => {
+        return await basicFetch('/');
+    },
+    getSessions: async () => {
+        return await basicFetch('/');
+    },
+    getRooms: async () => {
+        return await basicFetch('/');
+    },
+    getReservations: async () => {
+        return await basicFetch('/');
+    },
+    getAudits: async () => {
+        return await basicFetch('/');
     }
 }
 

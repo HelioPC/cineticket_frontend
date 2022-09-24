@@ -114,7 +114,7 @@ const Sidebar = () => {
                     onClick={() => setOpen(!open)}
                 />
 
-                <SidebarHeader open={open} name={user.name} onClick={() => navigate(`/profile/${user.email.replaceAll(' ', '')}`)} />
+                <SidebarHeader open={open} name={user.name} onClick={() => navigate('/')} />
 
                 <ul className='pt-6'>
                     {menu.map((item, index) => (

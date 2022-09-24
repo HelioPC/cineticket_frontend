@@ -32,10 +32,6 @@ const MainMovie = ({ image, title, releaseDate, onClick }: MainMovieProps) => {
                     </div>
 
                     <div className="flex mt-[55px] gap-x-10">
-                        <button onClick={onClick} className="px-[25px] py-[15px] flex items-center gap-3 rounded-md bg-black text-white font-bold hover:scale-105 duration-300 ease-in-out">
-                            <BsFillPlayFill />
-                            Play trailer
-                        </button>
                         <a href={`/reserva/${title}`} className="px-[25px] py-[15px] rounded-md bg-white text-black font-bold hover:scale-105 duration-300 ease-in-out">
                             Reserve já
                         </a>

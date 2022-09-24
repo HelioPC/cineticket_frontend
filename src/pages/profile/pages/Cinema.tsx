@@ -162,7 +162,7 @@ const Cinema = ({ name, setOpen }: CinemaProps) => {
         setsalaTamanho(previousValue => newValue)
     }
 
-    if(salas.length === 0) return <Loading text="Loading..." />
+    //if(salas.length === 0) return <Loading text="Loading..." />
 
     return (
         <div className="h-screen">

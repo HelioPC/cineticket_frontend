@@ -152,7 +152,7 @@ const NewCinema = ({ cidades, ruas, setOpen, setCidade }: NewCinemaProps) => {
                     type='submit'
                     onClick={handleSubmit}
                 >
-                    SUBMIT
+                    Adicionar cinema
                 </button>
             </div>
         </div>

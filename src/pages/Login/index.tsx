@@ -150,7 +150,7 @@ const Login = () => {
                     </form>
 
                     {
-                        loginFailed ? <p className="text-[#999] text-sm mt-10">Lorem ipsum dolor sit amet consectetur adipisicing elit. Id vel, ipsam numquam incidunt eaque quaerat. Dolor nostrum, distinctio dolore debitis molestiae fugit ipsam pariatur. Labore est quos vero vel repudiandae.</p> : null
+                        loginFailed ? <p className="text-[#999] text-sm mt-10">Email ou senha incorreta</p> : null
                     }
 
                     <p className="text-[#999] text-sm mt-10">
