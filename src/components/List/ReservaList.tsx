@@ -246,6 +246,9 @@ const ReservaList = () => {
 										<p className="font-bold">Cinema</p>
 									</TableCell>
 									<TableCell>
+										<p className="font-bold">Lugares</p>
+									</TableCell>
+									<TableCell>
 										<p className="font-bold">Estado</p>
 									</TableCell>
 									<TableCell>
@@ -281,6 +284,9 @@ const ReservaList = () => {
 												<div className='w-24'>
 													<p>{res.CINEMA}</p>
 												</div>
+											</TableCell>
+											<TableCell>
+												<p>{res.LUGARES}</p>
 											</TableCell>
 											<TableCell>
 												<Estado estado={res.ESTADO} />
